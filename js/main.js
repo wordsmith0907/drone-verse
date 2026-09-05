@@ -482,7 +482,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ==========================================================================
 
 function addToCart(arg1, arg2, arg3, arg4) {
-  let button, productId = 'item', productName = 'Robocraze Hardware Item', price = 0;
+  let button, productId = 'item', productName = 'DroneVerse Hardware Item', price = 0;
   
   if (arg1 && arg1.nodeType) {
     button = arg1;
@@ -534,9 +534,9 @@ function toggleWishlist(button) {
 }
 
 function quickView(productId) {
-  console.log('[Robocraze] Quick View:', productId);
+  console.log('[DroneVerse] Quick View:', productId);
 }
 
 function subscribeNewsletter() {
-  alert('Thank you for subscribing to Robocraze deals and engineering tutorials!');
+  alert('Thank you for subscribing to DroneVerse deals and engineering tutorials!');
 }
