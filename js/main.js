@@ -530,7 +530,7 @@ function toggleWishlist(button) {
   const isAdded = WishlistStore.toggle(id);
   button.classList.toggle('active', isAdded);
   const svg = button.querySelector('svg');
-  if (svg) svg.style.fill = isAdded ? '#E95D2A' : '';
+  if (svg) svg.style.fill = isAdded ? '#0066FE' : '';
 }
 
 function quickView(productId) {

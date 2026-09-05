@@ -1,26 +1,26 @@
 /* ==========================================================================
-   ZBOTIC UI THEME FOR DRONEVERSE
-   UI & Layout: Inspired by Zbotic (zbotic.in / XStore Theme)
-   Content & Data: DroneVerse.com (All word-for-word text, products, links)
+   DRONEVERSE UI THEME
+   Brand Identity: DroneVerse (Explore • Capture • Elevate)
+   Theme Palette: DroneVerse Electric Blue (#0066FE) & Carbon Midnight (#0A0F1D)
    ========================================================================== */
 
 /* Google Fonts: Roboto */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Space+Grotesk:wght@500;600;700&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap');
 
-/* ---- CSS Custom Properties: Zbotic Color & Design Tokens ---- */
+/* ---- CSS Custom Properties: DroneVerse Color & Design Tokens ---- */
 :root {
   /* Fonts */
   --font-family-base: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-family-display: 'Plus Jakarta Sans', sans-serif;
   --font-family-tech: 'Space Grotesk', monospace;
   
-  /* Primary Colors (Refined Obsidian Navy & Zbotic Coral) */
-  --zb-navy: #0B192C;            /* Deep obsidian tech navy - crisp, confident */
-  --zb-navy-dark: #050E1A;       /* Midnight deep navy for footer */
-  --zb-navy-light: #162E4A;      /* Elevated navy for cards / hover */
-  --zb-coral: #E95D2A;           /* Iconic Zbotic Coral CTA */
-  --zb-coral-hover: #D44E1D;     /* Active tactile coral */
-  --zb-blue: #0284C7;            /* Tech cyan/blue for focus rings */
+  /* Primary Colors (DroneVerse Carbon Midnight & Electric Blue) */
+  --zb-navy: #0A0F1D;            /* DroneVerse Carbon Midnight - deep, aerodynamic, crisp */
+  --zb-navy-dark: #060A14;       /* Deep space carbon for footer & dark bands */
+  --zb-navy-light: #111A2E;      /* Elevated carbon navy for cards / hover */
+  --zb-coral: #0066FE;           /* DroneVerse Electric Blue (Brand Primary Accent) */
+  --zb-coral-hover: #0052D4;     /* DroneVerse Royal Blue (Active tactile hover) */
+  --zb-blue: #00D2FF;            /* DroneVerse Cyber Cyan (Camera lens & glow accent) */
   --zb-green: #10B981;           /* Emerald for in-stock and savings */
   --zb-gold: #F59E0B;            /* Rating star gold */
   
@@ -32,7 +32,7 @@
   --zb-bg-white: #FFFFFF;
   --zb-bg-light: #F8FAFC;        /* Crisp off-white canvas */
   --zb-bg-card: #FFFFFF;
-  --zb-bg-topbar: #0B192C;       /* Consistent dark utility band */
+  --zb-bg-topbar: #0A0F1D;       /* DroneVerse dark carbon utility band */
   --zb-border: rgba(15, 23, 42, 0.08);       /* Hairline border */
   --zb-border-light: rgba(15, 23, 42, 0.04);
   --zb-border-dark: rgba(15, 23, 42, 0.16);
@@ -292,8 +292,8 @@ input, select, textarea {
 }
 
 .search-form:focus-within {
-  border-color: var(--zb-blue);
-  box-shadow: 0 0 0 3px rgba(0, 123, 196, 0.15);
+  border-color: var(--zb-coral);
+  box-shadow: 0 0 0 3px rgba(0, 102, 254, 0.2);
 }
 
 .search-form__input {
@@ -389,7 +389,7 @@ input, select, textarea {
   align-items: center;
   justify-content: center;
   line-height: 1;
-  box-shadow: 0 2px 4px rgba(233, 93, 42, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 102, 254, 0.35);
 }
 
 .header-action-btn__text {
@@ -1246,7 +1246,7 @@ input, select, textarea {
    ========================================================================== */
 .service-spotlight-section {
   padding: 40px 0;
-  background: linear-gradient(135deg, #112D4E 0%, #0B1E34 100%);
+  background: linear-gradient(135deg, var(--zb-navy) 0%, var(--zb-navy-dark) 100%);
   color: #FFFFFF;
 }
 
@@ -1503,11 +1503,35 @@ input, select, textarea {
 }
 
 /* Contact Info in Footer */
+.footer-logo {
+  max-width: 170px;
+  height: auto;
+  margin-bottom: 16px;
+  display: block;
+}
+
 .footer-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
   font-size: 13px;
   color: #CBD5E1;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   line-height: 1.5;
+}
+
+.footer-contact-item svg {
+  width: 16px;
+  min-width: 16px;
+  height: 16px;
+  fill: var(--zb-coral);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.footer-contact-item span,
+.footer-contact-item a {
+  flex: 1;
 }
 
 .footer-contact-item strong {
@@ -1516,6 +1540,7 @@ input, select, textarea {
 
 .footer-contact-item a {
   color: #CBD5E1;
+  transition: color var(--transition-fast);
 }
 
 .footer-contact-item a:hover {
@@ -2437,7 +2462,7 @@ input, select, textarea {
 .pdp-variant-btn.active, .pdp-variant-btn:hover {
   border-color: var(--zb-coral);
   color: var(--zb-coral);
-  background-color: #fff7ed;
+  background-color: #eff6ff;
 }
 
 /* Wholesale prompt */
@@ -2827,8 +2852,8 @@ input, select, textarea {
   transition: border-color var(--transition-fast);
 }
 .auth-input:focus {
-  border-color: var(--zb-blue);
-  box-shadow: 0 0 0 2px rgba(0, 123, 196, 0.15);
+  border-color: var(--zb-coral);
+  box-shadow: 0 0 0 2px rgba(0, 102, 254, 0.2);
 }
 .auth-btn {
   width: 100%;
@@ -2858,7 +2883,7 @@ input, select, textarea {
    STATIC & POLICY PAGES
    ========================================================================== */
 .static-page-header {
-  background: linear-gradient(135deg, var(--zb-navy) 0%, #1a3c65 100%);
+  background: linear-gradient(135deg, var(--zb-navy) 0%, var(--zb-navy-light) 100%);
   color: #ffffff;
   padding: 40px 0;
   text-align: center;
@@ -3415,7 +3440,24 @@ input, select, textarea {
 .footer-contacts {
   display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+.footer-contacts .footer-contact-item {
+  display: flex;
+  align-items: flex-start;
   gap: 10px;
+  font-size: 13px;
+  color: #CBD5E1;
+  line-height: 1.5;
+}
+.footer-contacts svg,
+.footer-contacts .footer-contact-item svg {
+  width: 16px;
+  min-width: 16px;
+  height: 16px;
+  fill: var(--zb-coral);
+  margin-top: 3px;
+  flex-shrink: 0;
 }
 .footer-heading {
   font-size: 15px;
@@ -3610,7 +3652,24 @@ input, select, textarea {
 .footer-contacts {
   display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+.footer-contacts .footer-contact-item {
+  display: flex;
+  align-items: flex-start;
   gap: 10px;
+  font-size: 13px;
+  color: #CBD5E1;
+  line-height: 1.5;
+}
+.footer-contacts svg,
+.footer-contacts .footer-contact-item svg {
+  width: 16px;
+  min-width: 16px;
+  height: 16px;
+  fill: var(--zb-coral);
+  margin-top: 3px;
+  flex-shrink: 0;
 }
 .footer-heading {
   font-size: 15px;
@@ -3857,7 +3916,7 @@ select:focus-visible {
 .cat-box:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-md);
-  border-color: rgba(233, 93, 42, 0.4);
+  border-color: rgba(0, 102, 254, 0.4);
 }
 .cat-box__img-wrap {
   width: 76px;
@@ -3892,7 +3951,7 @@ select:focus-visible {
 }
 .zb-product-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(11, 25, 44, 0.16);
+  border-color: rgba(10, 15, 29, 0.16);
   box-shadow: var(--shadow-card-hover);
 }
 .zb-product-card__image-wrap,
