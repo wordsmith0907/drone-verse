@@ -347,6 +347,25 @@
        HERO BANNER CAROUSEL
        ========================================================================== -->
   <section class="hero-banner-section" aria-label="Black Friday Sale">
+    <!-- 1. Background Photo Slider Layer (3 rotating background images) -->
+    <div class="hero-bg-wrapper">
+      <div class="hero-slider" id="heroSlider">
+        <div class="hero-slide">
+          <img src="images/hero_tech_showcase.jpg" alt="DroneVerse Robotics & Aerial Showcase" loading="eager">
+        </div>
+        <div class="hero-slide">
+          <img src="images/hero/raspberry_pi_5_banner.jpg" alt="Official Raspberry Pi 5 & Single Board Computers" loading="lazy">
+        </div>
+        <div class="hero-slide">
+          <img src="images/hero_ai_iot_showcase.jpg" alt="AI Edge Computing & IoT Hardware" loading="lazy">
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Dark Scrim Overlay (Near-black gradient over rotating background images) -->
+    <div class="hero-scrim-overlay"></div>
+
+    <!-- 3. Fixed Static Content Layer (Never rotates, stays fixed throughout) -->
     <div class="container hero-banner-container">
       <div class="hero-content-col">
         <div class="hero-sale-tag">
@@ -368,33 +387,21 @@
           </a>
         </div>
       </div>
+    </div>
 
-      <div class="hero-visual-col">
-        <div class="hero-product-cluster">
-          <div class="hero-cluster-header">
-            <span class="hero-cluster-tag">Featured Deals</span>
-            <span class="hero-cluster-discount">Save Up to 60%</span>
-          </div>
-          <div class="hero-cluster-grid">
-            <a href="./products/raspberry-pi-5.html" class="hero-cluster-card">
-              <img src="images/products/official_raspberry_pi_5.jpg" alt="Raspberry Pi 5">
-              <span class="hero-cluster-label">Raspberry Pi 5</span>
-            </a>
-            <a href="./products/arduino-uno-r4-wifi.html" class="hero-cluster-card">
-              <img src="images/products/arduino_uno_r4_wifi_with_esp32_s3_led_matrix.jpg" alt="Arduino Uno R4 WiFi">
-              <span class="hero-cluster-label">Arduino Uno R4</span>
-            </a>
-            <a href="./products/flysky-fs-i6x-transmitter.html" class="hero-cluster-card">
-              <img src="images/products/flysky_fs_i6x_10_channel_2_4ghz_transmitter_with_ia10b_receiver.jpg" alt="FlySky 10Ch Controller">
-              <span class="hero-cluster-label">FlySky FS-i6X</span>
-            </a>
-            <a href="./products/a2212-1000kv-motor.html" class="hero-cluster-card">
-              <img src="images/products/a2212_1000kv_brushless_motor_with_prop_adapter_mount.jpg" alt="A2212 Brushless Motor">
-              <span class="hero-cluster-label">A2212 Drone Motor</span>
-            </a>
-          </div>
-        </div>
-      </div>
+    <!-- 4. Controls (Nav Buttons & Dots for Background Image Rotation) -->
+    <div class="hero-slider__nav">
+      <button class="hero-slider__btn" id="heroPrev" aria-label="Previous Slide">
+        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+      </button>
+      <button class="hero-slider__btn" id="heroNext" aria-label="Next Slide">
+        <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+      </button>
+    </div>
+    <div class="hero-slider__dots" id="heroDots">
+      <span class="hero-dot active" data-slide="0"></span>
+      <span class="hero-dot" data-slide="1"></span>
+      <span class="hero-dot" data-slide="2"></span>
     </div>
   </section>
 
