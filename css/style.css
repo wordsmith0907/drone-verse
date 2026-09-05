@@ -38,7 +38,7 @@
   --zb-border-dark: rgba(15, 23, 42, 0.16);
   
   /* Layout Dimensions */
-  --container-max-width: 1440px;
+  --container-max-width: 1680px;
   --header-height: 78px;
   --radius-xs: 3px;
   --radius-sm: 6px;
@@ -276,7 +276,7 @@ input, select, textarea {
 /* Solaris Search Bar (Zbotic signature) */
 .site-header__search {
   flex: 1;
-  max-width: 650px;
+  max-width: 760px;
 }
 
 .search-form {
@@ -2130,7 +2130,7 @@ input, select, textarea {
 .category-header__desc {
   font-size: 13.5px;
   color: var(--zb-text-body);
-  max-width: 900px;
+  max-width: 1200px;
   line-height: 1.6;
   margin-bottom: 16px;
 }
@@ -3091,7 +3091,7 @@ input, select, textarea {
   color: #e2e8f0;
 }
 .static-content {
-  max-width: 960px;
+  max-width: 1200px;
   margin: 0 auto 60px;
   line-height: 1.8;
   color: var(--zb-text-body);
