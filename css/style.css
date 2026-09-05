@@ -5,52 +5,57 @@
    ========================================================================== */
 
 /* Google Fonts: Roboto */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Space+Grotesk:wght@500;600;700&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap');
 
 /* ---- CSS Custom Properties: Zbotic Color & Design Tokens ---- */
 :root {
   /* Fonts */
-  --font-family-base: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --font-family-base: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-display: 'Plus Jakarta Sans', sans-serif;
+  --font-family-tech: 'Space Grotesk', monospace;
   
-  /* Primary Colors (Zbotic Signature) */
-  --zb-navy: #112D4E;            /* Main brand navy blue - header, buttons, footer */
-  --zb-navy-dark: #0B1E34;       /* Deep navy for footer bottom */
-  --zb-navy-light: #1E3A5F;      /* Hover states */
-  --zb-coral: #E95D2A;           /* Zbotic signature accent orange/coral */
-  --zb-coral-hover: #D44E1D;     /* Darker coral for active/hover */
-  --zb-blue: #007BC4;            /* Secondary tech blue for search focus & links */
-  --zb-green: #11A45D;           /* Sale badges and in-stock badges */
-  --zb-gold: #F59E0B;            /* Rating star yellow/amber */
+  /* Primary Colors (Refined Obsidian Navy & Zbotic Coral) */
+  --zb-navy: #0B192C;            /* Deep obsidian tech navy - crisp, confident */
+  --zb-navy-dark: #050E1A;       /* Midnight deep navy for footer */
+  --zb-navy-light: #162E4A;      /* Elevated navy for cards / hover */
+  --zb-coral: #E95D2A;           /* Iconic Zbotic Coral CTA */
+  --zb-coral-hover: #D44E1D;     /* Active tactile coral */
+  --zb-blue: #0284C7;            /* Tech cyan/blue for focus rings */
+  --zb-green: #10B981;           /* Emerald for in-stock and savings */
+  --zb-gold: #F59E0B;            /* Rating star gold */
   
-  /* Neutral Colors */
-  --zb-text-dark: #212529;
-  --zb-text-body: #495057;
-  --zb-text-muted: #7A828A;
-  --zb-text-light: #9EA5AD;
+  /* Neutral Colors (Refined High-Contrast Scale) */
+  --zb-text-dark: #0F172A;       /* WCAG AAA dark text */
+  --zb-text-body: #334155;       /* WCAG AA Slate body text */
+  --zb-text-muted: #64748B;      /* Secondary microcopy */
+  --zb-text-light: #94A3B8;      /* Captions and placeholders */
   --zb-bg-white: #FFFFFF;
-  --zb-bg-light: #F8F9FA;
-  --zb-bg-topbar: #F4F6F9;
-  --zb-border: #E5E8EC;
-  --zb-border-light: #F0F2F5;
-  --zb-border-dark: #CBD3DB;
+  --zb-bg-light: #F8FAFC;        /* Crisp off-white canvas */
+  --zb-bg-card: #FFFFFF;
+  --zb-bg-topbar: #0B192C;       /* Consistent dark utility band */
+  --zb-border: rgba(15, 23, 42, 0.08);       /* Hairline border */
+  --zb-border-light: rgba(15, 23, 42, 0.04);
+  --zb-border-dark: rgba(15, 23, 42, 0.16);
   
   /* Layout Dimensions */
   --container-max-width: 1440px;
-  --header-height: 80px;
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 10px;
+  --header-height: 78px;
+  --radius-xs: 3px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
   --radius-full: 9999px;
   
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 12px rgba(17, 45, 78, 0.08);
-  --shadow-card-hover: 0 8px 24px rgba(17, 45, 78, 0.12);
-  --shadow-dropdown: 0 10px 30px rgba(0, 0, 0, 0.12);
+  /* Shadows: Soft Ambient Elevation (No heavy muddy gray drops) */
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --shadow-card-hover: 0 16px 32px -8px rgba(15, 23, 42, 0.10), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
+  --shadow-dropdown: 0 20px 40px -10px rgba(15, 23, 42, 0.14);
   
-  /* Transitions */
-  --transition-fast: 0.15s ease-in-out;
-  --transition-normal: 0.25s ease-in-out;
+  /* Luxury Easing */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 0.15s var(--ease-spring);
+  --transition-normal: 0.25s var(--ease-spring);
 }
 
 /* ---- Reset & Global Styles ---- */
@@ -3792,3 +3797,163 @@ input, select, textarea {
   box-shadow: var(--shadow-sm);
 }
 
+
+/* ==========================================================================
+   EDITORIAL TECH AESTHETIC & ACCESSIBILITY REFINEMENTS
+   ========================================================================== */
+
+/* 1. Universal Tabular Figures for All Currency & Numerical Displays */
+.zb-price-main,
+.zb-current-price,
+.zb-price-compare,
+.zb-mrp-price,
+.header-action-btn__title,
+.cart-summary__value,
+.checkout-summary__price,
+.pdp-price__current {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.015em;
+}
+
+/* 2. Accessible Focus Ring (WCAG 2.1 AA Compliant) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--zb-coral) !important;
+  outline-offset: 2px !important;
+}
+
+/* 3. Refined Section Titles & Category Headers */
+.section-title {
+  font-family: var(--font-family-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--zb-navy);
+}
+
+.section-header::after {
+  height: 3px;
+  border-radius: var(--radius-full);
+}
+
+/* 4. Architectural Squircle Category Cards */
+.cat-box {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--zb-border);
+  background: #FFFFFF;
+  padding: 16px 12px;
+  transition: transform 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-spring), border-color 0.25s var(--ease-spring);
+}
+.cat-box:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(233, 93, 42, 0.4);
+}
+.cat-box__img-wrap {
+  width: 76px;
+  height: 76px;
+  border-radius: var(--radius-sm);
+  background-color: var(--zb-bg-light);
+  border: 1px solid var(--zb-border);
+  padding: 6px;
+  margin-bottom: 10px;
+}
+.cat-box__img-wrap img {
+  object-fit: contain;
+  transition: transform 0.3s var(--ease-spring);
+}
+.cat-box:hover .cat-box__img-wrap img {
+  transform: scale(1.08);
+}
+.cat-box__name {
+  font-family: var(--font-family-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--zb-navy);
+}
+
+/* 5. Refined Product Cards & Subtle Image Padding */
+.zb-product-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--zb-border);
+  background-color: #FFFFFF;
+  transition: transform 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-spring), border-color 0.25s var(--ease-spring);
+}
+.zb-product-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(11, 25, 44, 0.16);
+  box-shadow: var(--shadow-card-hover);
+}
+.zb-product-card__image-wrap,
+.zb-product-card__img-wrap {
+  background-color: #FAFBFD;
+  padding: 16px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+.zb-product-card__title {
+  font-family: var(--font-family-display);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+.zb-product-card__btn,
+.zb-btn-add-cart {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s var(--ease-spring), transform 0.15s var(--ease-spring);
+}
+.zb-product-card__btn:active,
+.zb-btn-add-cart:active {
+  transform: scale(0.97);
+}
+
+/* 6. Promo Banner Zoom on Hover */
+.promo-banner-card {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--zb-border);
+  display: block;
+}
+.promo-banner-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.45s var(--ease-spring);
+}
+.promo-banner-card:hover img {
+  transform: scale(1.03);
+}
+
+.service-spotlight__image {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--zb-border);
+}
+.service-spotlight__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.45s var(--ease-spring);
+}
+.service-spotlight__inner:hover .service-spotlight__image img {
+  transform: scale(1.03);
+}
+
+/* 7. Reduced Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
