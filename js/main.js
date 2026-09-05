@@ -2,11 +2,131 @@
    ROBOCRAZE (Zbotic UI Theme) - Main Interactive JavaScript
    ========================================================================== */
 
+// ==========================================================================
+// 1. PERSISTENT CART & WISHLIST STORE (localStorage)
+// ==========================================================================
+
+const CartStore = {
+  getCart() {
+    try {
+      const stored = localStorage.getItem('rc_cart');
+      return stored ? JSON.parse(stored) : [
+        { id: 'RC-ARD-001', name: 'Original Arduino Uno R3 Development Board', price: 2199.00, qty: 1 },
+        { id: 'RC-SNS-001', name: 'HC-SR04 Ultrasonic Distance Sensor Module', price: 59.00, qty: 2 }
+      ];
+    } catch (e) {
+      return [];
+    }
+  },
+
+  saveCart(items) {
+    try {
+      localStorage.setItem('rc_cart', JSON.stringify(items));
+    } catch (e) {
+      console.error('Error saving cart:', e);
+    }
+    this.syncBadges();
+  },
+
+  addItem(id, name, price, qty = 1) {
+    const items = this.getCart();
+    const existing = items.find(item => item.id === id || item.name === name);
+    if (existing) {
+      existing.qty += qty;
+    } else {
+      items.push({ id, name, price, qty });
+    }
+    this.saveCart(items);
+  },
+
+  updateQty(id, delta) {
+    const items = this.getCart();
+    const item = items.find(i => i.id === id);
+    if (item) {
+      item.qty += delta;
+      if (item.qty <= 0) {
+        this.removeItem(id);
+        return;
+      }
+      this.saveCart(items);
+    }
+  },
+
+  removeItem(id) {
+    let items = this.getCart();
+    items = items.filter(i => i.id !== id);
+    this.saveCart(items);
+  },
+
+  getTotalCount() {
+    return this.getCart().reduce((sum, item) => sum + item.qty, 0);
+  },
+
+  getSubtotal() {
+    return this.getCart().reduce((sum, item) => sum + (item.price * item.qty), 0);
+  },
+
+  syncBadges() {
+    const count = this.getTotalCount();
+    const subtotal = this.getSubtotal();
+    const formattedTotal = `₹${subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    const headerCartBadge = document.getElementById('cartCount');
+    const mobileCartBadge = document.getElementById('mobileCartCount');
+    const headerCartTotal = document.getElementById('cartTotal') || document.getElementById('cartTotalNav');
+
+    if (headerCartBadge) headerCartBadge.textContent = count;
+    if (mobileCartBadge) mobileCartBadge.textContent = count;
+    if (headerCartTotal) headerCartTotal.textContent = formattedTotal;
+  }
+};
+
+const WishlistStore = {
+  getWishlist() {
+    try {
+      const stored = localStorage.getItem('rc_wishlist');
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      return [];
+    }
+  },
+
+  toggle(id) {
+    let list = this.getWishlist();
+    const index = list.indexOf(id);
+    let added = false;
+    if (index > -1) {
+      list.splice(index, 1);
+    } else {
+      list.push(id);
+      added = true;
+    }
+    try {
+      localStorage.setItem('rc_wishlist', JSON.stringify(list));
+    } catch (e) {}
+    this.syncBadge();
+    return added;
+  },
+
+  syncBadge() {
+    const badge = document.getElementById('wishlistCount');
+    if (badge) badge.textContent = this.getWishlist().length;
+  }
+};
+
+// ==========================================================================
+// 2. DOM INITIALIZATION & EVENT DELEGATION
+// ==========================================================================
+
 document.addEventListener('DOMContentLoaded', function() {
 
-  // ==========================================================================
-  // 1. HERO BANNER SLIDER
-  // ==========================================================================
+  // Sync state from storage
+  CartStore.syncBadges();
+  WishlistStore.syncBadge();
+
+  // ------------------------------------------------------------------------
+  // HERO BANNER SLIDER
+  // ------------------------------------------------------------------------
   const slider = document.getElementById('heroSlider');
   const dots = document.querySelectorAll('.hero-dot');
   const prevBtn = document.getElementById('heroPrev');
@@ -27,13 +147,8 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    function nextSlide() {
-      goToSlide(currentSlide + 1);
-    }
-
-    function prevSlide() {
-      goToSlide(currentSlide - 1);
-    }
+    function nextSlide() { goToSlide(currentSlide + 1); }
+    function prevSlide() { goToSlide(currentSlide - 1); }
 
     function startAutoSlide() {
       stopAutoSlide();
@@ -45,17 +160,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        nextSlide();
-        startAutoSlide();
-      });
+      nextBtn.addEventListener('click', () => { nextSlide(); startAutoSlide(); });
     }
-
     if (prevBtn) {
-      prevBtn.addEventListener('click', () => {
-        prevSlide();
-        startAutoSlide();
-      });
+      prevBtn.addEventListener('click', () => { prevSlide(); startAutoSlide(); });
     }
 
     dots.forEach((dot) => {
@@ -69,9 +177,9 @@ document.addEventListener('DOMContentLoaded', function() {
     startAutoSlide();
   }
 
-  // ==========================================================================
-  // 2. "ALL DEPARTMENTS" MENU TOGGLE (Mobile & Desktop)
-  // ==========================================================================
+  // ------------------------------------------------------------------------
+  // "ALL DEPARTMENTS" MENU TOGGLE
+  // ------------------------------------------------------------------------
   const deptTrigger = document.getElementById('departmentsTrigger');
   const deptMenu = document.getElementById('departmentsMenu');
 
@@ -88,21 +196,18 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // ==========================================================================
-  // 3. BESTSELLERS TAB SWITCHING
-  // ==========================================================================
+  // ------------------------------------------------------------------------
+  // TAB NAVIGATION (HOMEPAGE)
+  // ------------------------------------------------------------------------
   const tabButtons = document.querySelectorAll('.zb-tab-btn');
   const tabContents = document.querySelectorAll('.zb-tab-content');
 
   tabButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
       const targetTabId = btn.getAttribute('data-tab');
-
-      // Update button active state
       tabButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
-      // Update content panel active state
       tabContents.forEach(content => {
         if (content.id === targetTabId) {
           content.classList.add('active');
@@ -113,11 +218,113 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // ==========================================================================
-  // 4. BACK TO TOP BUTTON
-  // ==========================================================================
-  const backToTopBtn = document.getElementById('backToTop') || document.getElementById('backToTopBtn');
+  // ------------------------------------------------------------------------
+  // CART PAGE TABLE INTERACTIONS (Interactive Quantity & Removal)
+  // ------------------------------------------------------------------------
+  const cartTable = document.querySelector('.cart-table');
+  if (cartTable) {
+    const qtyInputs = cartTable.querySelectorAll('.pdp-qty-input');
+    
+    // Bind plus / minus buttons in table
+    cartTable.querySelectorAll('.cart-item-row, tr').forEach(row => {
+      const minusBtn = row.querySelector('.pdp-qty-btn:first-of-type');
+      const plusBtn = row.querySelector('.pdp-qty-btn:last-of-type');
+      const input = row.querySelector('.pdp-qty-input');
+      const removeBtn = row.querySelector('button[title="Remove Item"], .cart-item__remove');
 
+      if (minusBtn && input) {
+        minusBtn.addEventListener('click', () => {
+          let val = parseInt(input.value, 10) || 1;
+          if (val > 1) {
+            input.value = val - 1;
+            CartStore.addItem('cart-row', 'Item', 0, -1);
+            recalculateCartTable();
+          }
+        });
+      }
+
+      if (plusBtn && input) {
+        plusBtn.addEventListener('click', () => {
+          let val = parseInt(input.value, 10) || 1;
+          input.value = val + 1;
+          CartStore.addItem('cart-row', 'Item', 0, 1);
+          recalculateCartTable();
+        });
+      }
+
+      if (removeBtn) {
+        removeBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          row.style.transition = 'opacity 0.25s ease';
+          row.style.opacity = '0';
+          setTimeout(() => {
+            row.remove();
+            recalculateCartTable();
+          }, 250);
+        });
+      }
+    });
+
+    function recalculateCartTable() {
+      let subtotal = 0;
+      cartTable.querySelectorAll('tbody tr').forEach(r => {
+        const priceCell = r.querySelector('.cart-item-price, td:nth-child(2)');
+        const qtyInput = r.querySelector('.pdp-qty-input');
+        const totalCell = r.querySelector('.cart-total-val, td:nth-child(4)');
+
+        if (priceCell && qtyInput) {
+          const price = parseFloat(priceCell.textContent.replace(/[^\d.]/g, '')) || 0;
+          const qty = parseInt(qtyInput.value, 10) || 0;
+          const lineTotal = price * qty;
+          if (totalCell) {
+            totalCell.textContent = `₹${lineTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+          }
+          subtotal += lineTotal;
+        }
+      });
+
+      const summarySubtotal = document.querySelector('.cart-summary__subtotal, .summary-row:first-child span:last-child');
+      const summaryGst = document.querySelector('.cart-summary__gst, .summary-row:nth-child(2) span:last-child');
+      const summaryGrand = document.querySelector('.cart-summary-total, .summary-total span:last-child');
+
+      if (summarySubtotal) summarySubtotal.textContent = `₹${subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      if (summaryGst) summaryGst.textContent = `₹${(subtotal * 0.18 / 1.18).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      if (summaryGrand) summaryGrand.textContent = `₹${subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+
+      CartStore.syncBadges();
+    }
+  }
+
+  // ------------------------------------------------------------------------
+  // SEARCH QUERY FILTERING (search.html)
+  // ------------------------------------------------------------------------
+  const searchParams = new URLSearchParams(window.location.search);
+  const query = searchParams.get('q');
+  const searchGrid = document.getElementById('searchProductGrid') || document.getElementById('shopProductGrid');
+  const searchTitle = document.querySelector('.search-results-header h1, .search-query-display');
+
+  if (query && searchGrid) {
+    const qLower = query.toLowerCase();
+    let matches = 0;
+    Array.from(searchGrid.children).forEach(card => {
+      const title = (card.getAttribute('data-title') || card.textContent || '').toLowerCase();
+      if (title.includes(qLower)) {
+        card.style.display = '';
+        matches++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    if (searchTitle) {
+      searchTitle.textContent = `Search results for "${query}" (${matches} items found)`;
+    }
+  }
+
+  // ------------------------------------------------------------------------
+  // BACK TO TOP BUTTON
+  // ------------------------------------------------------------------------
+  const backToTopBtn = document.getElementById('backToTop') || document.getElementById('backToTopBtn');
   if (backToTopBtn) {
     window.addEventListener('scroll', () => {
       if (window.scrollY > 350) {
@@ -132,120 +339,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // ==========================================================================
-  // 5. MOBILE BOTTOM PANEL "MORE" DRAWER TOGGLE
-  // ==========================================================================
-  const mobileMenuOpenBtn = document.getElementById('mobileMenuOpenBtn');
-  if (mobileMenuOpenBtn && deptMenu) {
-    mobileMenuOpenBtn.addEventListener('click', () => {
-      deptMenu.classList.toggle('is-active');
-      window.scrollTo({ top: 120, behavior: 'smooth' });
-    });
-  }
-
-});
-
-// ==========================================================================
-// 6. GLOBAL CART & WISHLIST FUNCTIONS (Frontend Placeholders with Live Feedback)
-// ==========================================================================
-
-let globalCartCount = 0;
-let globalCartTotal = 0;
-let globalWishlistCount = 0;
-
-/**
- * Add to Cart Simulation
- */
-function addToCart(arg1, arg2, arg3, arg4) {
-  let button, productId, price = 0;
-  if (arg1 && arg1.nodeType) {
-    button = arg1;
-    productId = button.getAttribute('data-product-id') || 'item';
-    const card = button.closest('.zb-product-card');
-    const priceElement = card ? (card.querySelector('.zb-price-main') || card.querySelector('.zb-current-price')) : null;
-    if (priceElement) {
-      price = parseFloat(priceElement.textContent.replace(/[^\d.]/g, '')) || 0;
-    }
-  } else {
-    productId = arg1;
-    price = typeof arg3 === 'number' ? arg3 : (parseFloat(arg3) || 0);
-    button = (arg4 && arg4.nodeType) ? arg4 : (typeof event !== 'undefined' ? event.currentTarget : null);
-  }
-
-  // Visual feedback on button
-  if (button) {
-    const originalText = button.innerHTML;
-    button.innerHTML = `
-      <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-      Added ✓
-    `;
-    button.style.backgroundColor = '#11A45D';
-    button.style.borderColor = '#11A45D';
-    button.disabled = true;
-
-    setTimeout(() => {
-      button.innerHTML = originalText;
-      button.style.backgroundColor = '';
-      button.style.borderColor = '';
-      button.disabled = false;
-    }, 2000);
-  }
-
-  // Increment counters
-  globalCartCount += 1;
-  globalCartTotal += price;
-
-  const headerCartBadge = document.getElementById('cartCount');
-  const mobileCartBadge = document.getElementById('mobileCartCount');
-  const headerCartTotal = document.getElementById('cartTotal') || document.getElementById('cartTotalNav');
-
-  if (headerCartBadge) headerCartBadge.textContent = globalCartCount;
-  if (mobileCartBadge) mobileCartBadge.textContent = globalCartCount;
-  if (headerCartTotal) headerCartTotal.textContent = `₹${globalCartTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-
-  console.log(`[Robocraze] Added "${productId}" to cart. Total items: ${globalCartCount}`);
-}
-
-/**
- * Toggle Wishlist item
- */
-function toggleWishlist(button) {
-  button.classList.toggle('active');
-  const isActive = button.classList.contains('active');
-  const svg = button.querySelector('svg');
-  const wishlistBadge = document.getElementById('wishlistCount');
-
-  if (isActive) {
-    if (svg) svg.style.fill = '#E95D2A';
-    globalWishlistCount += 1;
-  } else {
-    if (svg) svg.style.fill = '';
-    globalWishlistCount = Math.max(0, globalWishlistCount - 1);
-  }
-
-  if (wishlistBadge) wishlistBadge.textContent = globalWishlistCount;
-}
-
-/**
- * Quick View placeholder
- */
-function quickView(productId) {
-  console.log(`[Robocraze] Quick View triggered for: ${productId}`);
-  // In a full implementation, opens a lightbox/modal with product details and specs
-}
-
-/**
- * Newsletter subscribe placeholder
- */
-function subscribeNewsletter() {
-  alert('Thank you for subscribing to Robocraze deals and engineering tutorials!');
-}
-
-// ==========================================================================
-// 8. PDP GALLERY & INTERACTIONS
-// ==========================================================================
-document.addEventListener('DOMContentLoaded', function() {
-  // Gallery thumbnails
+  // ------------------------------------------------------------------------
+  // PDP INTERACTIONS
+  // ------------------------------------------------------------------------
   const thumbs = document.querySelectorAll('.pdp-thumb');
   const mainImg = document.getElementById('pdpMainImg');
   if (thumbs.length && mainImg) {
@@ -259,7 +355,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // PDP Quantity Picker
   const qtyMinus = document.getElementById('pdpQtyMinus');
   const qtyPlus = document.getElementById('pdpQtyPlus');
   const qtyInput = document.getElementById('pdpQtyInput');
@@ -274,7 +369,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // PDP Tab Switching
   const pdpTabTriggers = document.querySelectorAll('.pdp-tab-trigger');
   const pdpPanes = document.querySelectorAll('.pdp-tab-pane');
   if (pdpTabTriggers.length && pdpPanes.length) {
@@ -289,7 +383,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // PDP Pincode Checker
   const pincodeBtn = document.getElementById('pdpPincodeBtn');
   const pincodeInput = document.getElementById('pdpPincodeInput');
   const pincodeResult = document.getElementById('pdpPincodeResult');
@@ -306,7 +399,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Variant selector buttons
   const variantBtns = document.querySelectorAll('.pdp-variant-btn');
   variantBtns.forEach(vBtn => {
     vBtn.addEventListener('click', function() {
@@ -384,3 +476,67 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
+// ==========================================================================
+// 3. GLOBAL EXPOSED EVENT HANDLERS
+// ==========================================================================
+
+function addToCart(arg1, arg2, arg3, arg4) {
+  let button, productId = 'item', productName = 'Robocraze Hardware Item', price = 0;
+  
+  if (arg1 && arg1.nodeType) {
+    button = arg1;
+    productId = button.getAttribute('data-product-id') || 'item';
+    const card = button.closest('.zb-product-card');
+    if (card) {
+      const titleElem = card.querySelector('.zb-product-card__title a') || card.querySelector('.zb-product-card__title');
+      if (titleElem) productName = titleElem.textContent.trim();
+      const priceElem = card.querySelector('.zb-price-main') || card.querySelector('.zb-current-price');
+      if (priceElem) price = parseFloat(priceElem.textContent.replace(/[^\d.]/g, '')) || 0;
+    }
+  } else {
+    productId = arg1 || 'item';
+    productName = arg2 || 'Product';
+    price = typeof arg3 === 'number' ? arg3 : (parseFloat(arg3) || 0);
+    button = (arg4 && arg4.nodeType) ? arg4 : (typeof event !== 'undefined' ? event.currentTarget : null);
+  }
+
+  // Visual feedback
+  if (button) {
+    const origHTML = button.innerHTML;
+    button.innerHTML = `
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      Added ✓
+    `;
+    button.style.backgroundColor = '#10B981';
+    button.style.borderColor = '#10B981';
+    button.disabled = true;
+
+    setTimeout(() => {
+      button.innerHTML = origHTML;
+      button.style.backgroundColor = '';
+      button.style.borderColor = '';
+      button.disabled = false;
+    }, 1800);
+  }
+
+  // Persist to CartStore
+  CartStore.addItem(productId, productName, price, 1);
+}
+
+function toggleWishlist(button) {
+  const card = button.closest('.zb-product-card');
+  const id = card ? (card.getAttribute('data-title') || 'item') : 'item';
+  const isAdded = WishlistStore.toggle(id);
+  button.classList.toggle('active', isAdded);
+  const svg = button.querySelector('svg');
+  if (svg) svg.style.fill = isAdded ? '#E95D2A' : '';
+}
+
+function quickView(productId) {
+  console.log('[Robocraze] Quick View:', productId);
+}
+
+function subscribeNewsletter() {
+  alert('Thank you for subscribing to Robocraze deals and engineering tutorials!');
+}

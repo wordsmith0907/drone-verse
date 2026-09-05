@@ -3810,7 +3810,15 @@ input, select, textarea {
 .header-action-btn__title,
 .cart-summary__value,
 .checkout-summary__price,
-.pdp-price__current {
+.pdp-price__current,
+.pdp-price-current,
+.pdp-price-mrp,
+.zb-price-gst,
+.zb-gst-note,
+.pdp-gst-text,
+.cart-item-price,
+.cart-total-val,
+.cart-summary-total {
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.015em;
 }
@@ -3955,5 +3963,48 @@ select:focus-visible {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   AUDIT REMEDIATIONS: TECH TYPOGRAPHY, MOBILE OVERFLOW & TOUCH TARGETS
+   ========================================================================== */
+
+/* Apply Space Grotesk to Technical Specs, SKUs, and Badges */
+.zb-product-card__sku,
+.pdp-sku,
+.pdp-specs-table th,
+.cart-item__sku,
+.zb-badge,
+.badge,
+.pdp-spec-label {
+  font-family: var(--font-family-tech);
+  letter-spacing: 0.02em;
+}
+
+/* Cart Table Container for Responsive Horizontal Scrolling */
+.cart-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 24px;
+}
+
+/* Mobile Viewport Header & Touch Target Polish */
+@media (max-width: 768px) {
+  .site-header__actions {
+    gap: 12px;
+  }
+  .header-action-btn__text {
+    display: none !important;
+  }
+  .mobile-bottom-btn {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 6px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 }
