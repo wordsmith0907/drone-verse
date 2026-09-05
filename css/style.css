@@ -128,6 +128,7 @@ input, select, textarea {
    TOP BAR (Zbotic Style: Utility menu + Contacts + Social)
    ========================================================================== */
 .top-bar {
+  display: none !important;
   background-color: var(--zb-bg-topbar);
   border-bottom: 1px solid var(--zb-border);
   font-size: 12px;
