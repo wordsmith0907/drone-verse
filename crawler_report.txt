@@ -1,0 +1,448 @@
+# Comprehensive Robocraze (robocraze.com) Site Architecture, Layout & Design Documentation
+
+This document provides the complete structural, visual, and architectural audit of **Robocraze** (https://robocraze.com/), captured for the purpose of rebuilding the site from scratch.
+
+---
+
+## 1. Brand Identity & Design System Tokens
+
+### 1.1 Color Scheme
+Robocraze utilizes a vibrant tech-retail palette centered around energetic orange and slate dark neutrals:
+* **Primary Brand Orange:** `#FF6B00` (Hover: `#EA580C`, Active: `#D9480F`) – Main CTA buttons, announcement bars, price highlights, active badges.
+* **Dark Navy / Slate Charcoal:** `#0F172A` / `#1E293B` – Primary typography, headers, main navigation background accents, dark buttons.
+* **Secondary Slate Muted:** `#475569` / `#64748B` – Secondary text, SKUs, breadcrumbs, specifications labels.
+* **Background Light / Canvas:** `#FFFFFF` – Main page background.
+* **Card & Section Surface Neutral:** `#F8FAFC` / `#F1F5F9` – Feature strips, sidebar filters, product spec tables.
+* **Border & Line Color:** `#E2E8F0` / `#CBD5E1` – Card borders, dividers, input borders.
+* **Success / Stock Green:** `#16A34A` / `#22C55E` – "In Stock" indicators, free shipping qualifiers.
+* **Alert / Discount Red:** `#DC2626` / `#EF4444` – Sale badges, strikethrough savings tags, out-of-stock indicators.
+* **Rating Gold:** `#F59E0B` – Star ratings for verified reviews.
+
+### 1.2 Typography
+* **Font Family Stack:**
+  ```css
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  ```
+  (Heading accents frequently pair with clean sans-serif like *Montserrat* or *Inter*).
+* **Font Sizing & Hierarchy:**
+  * **H1 (Hero Titles, Page Titles):** `32px – 40px` (Weight: 700 / 800, line-height: 1.2)
+  * **H2 (Section Headings):** `24px – 28px` (Weight: 700, line-height: 1.3)
+  * **H3 (Product Titles, Block Headers):** `16px – 18px` (Weight: 600, line-height: 1.4)
+  * **H4 / Subheadings:** `14px – 15px` (Weight: 600)
+  * **Body / Paragraph:** `14px – 15px` (Weight: 400, line-height: 1.6)
+  * **Badges, Tags, Metadata:** `11px – 12px` (Weight: 500 / 600, text-transform: uppercase, letter-spacing: 0.5px)
+
+---
+
+## 2. Global Elements & Header Architecture
+
+### 2.1 Announcement Bar
+* **Location:** Topmost banner across all pages.
+* **Text / Promotions:**
+  * `FREE SHIPPING! ₹100 OFF ON ₹999 | ₹200 OFF ON ₹2500 | ₹400 OFF ON ₹4900`
+* **Utility Links (Right):** "Track Your Order" (`/pages/track-your-order`), "Bulk Enquiries / B2B".
+* **HTML Blueprint:**
+  ```html
+  <div class="announcement-bar bg-orange-600 text-white text-xs py-2 px-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <div class="announcement-ticker font-medium tracking-wide">
+        <span>⚡ FREE SHIPPING on orders above ₹999 | Use Code: CRAZE100</span>
+      </div>
+      <div class="utility-links hidden md:flex items-center space-x-4">
+        <a href="/pages/track-order" class="hover:underline">Track Your Order</a>
+        <a href="/pages/b2b-wholesale" class="hover:underline">B2B Enquiries</a>
+      </div>
+    </div>
+  </div>
+  ```
+
+### 2.2 Main Header & Search
+* **Layout:** 3-column desktop layout (Logo Left, Wide Search Center, User Utilities Right).
+* **Header Components:**
+  1. **Brand Logo:** `https://robocraze.com` linking to home with responsive SVG/PNG logo.
+  2. **Predictive Search Bar:**
+     ```html
+     <form action="/search" method="get" class="search-bar flex items-center border border-gray-300 rounded-md overflow-hidden w-full max-w-xl">
+       <input type="search" name="q" placeholder="Search for Arduino, Raspberry Pi, Motors, Sensors..." class="w-full px-4 py-2 text-sm focus:outline-none" />
+       <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+       </button>
+     </form>
+     ```
+  3. **User Action Utilities:**
+     * **Account / Sign In:** `/account/login`
+     * **Wishlist:** `/pages/wishlist`
+     * **Cart Drawer Trigger:** `/cart` displaying subtotal and dynamic badge counter `<span class="cart-badge bg-orange-600 text-white text-xs rounded-full px-2 py-0.5">0</span>`.
+
+### 2.3 Mega Navigation Menu Structure
+Robocraze categorizes its thousands of SKUs into a multi-tier navigation bar:
+
+1. **STEM Kits**
+   * College Kits, Trainers Kits, IOT Kits, AI/ML Kits
+   * DIY Drone Kits
+   * School Kits: Basic Kits, Intermediate Kits, Advanced Kits
+   * Robotic Car Kits, DIY STEM Toys
+   * BBC Micro:Bit & Micro:bit expansion boards
+   * Science Kits by Age: Ages 3+, 5+, 7+, 10+, 12+
+   * Pludo Educational Kits
+
+2. **Raspberry Pi**
+   * Boards: Raspberry Pi 5 (2GB/4GB/8GB/16GB), Pi 4B, Pi Zero 2 W, Pi Pico/Pico W, Compute Module 4
+   * Starter & Desktop Bundles
+   * Displays & Touchscreens
+   * Power Supplies (Official 27W USB-C PD, 15W)
+   * Cameras & AI Camera Modules
+   * Cases, Active Coolers & Heatsinks
+   * HATs, Cables & MicroSD Pre-flashed Cards
+
+3. **Arduino**
+   * Original Arduino Boards (Uno R3, Uno R4 Minima/WiFi, Mega 2560, Nano Every, Nano ESP32)
+   * Compatible & SMD Boards (Uno SMD, Mega CH340, Nano V3)
+   * Arduino Starter Kits & Student Kits
+   * Arduino Shields (Motor Driver Shields, Sensor Shields, Relay Shields)
+
+4. **AI & Machine Learning**
+   * Nvidia Jetson (Orin Nano, Jetson Nano Developer Kits)
+   * AI Hats & Edge Accelerators (Google Coral, Hailo)
+   * Smart AI Cameras (HuskyLens, OpenMV)
+
+5. **3D Printers & Filaments**
+   * 3D Printers: Bambu Lab (X1C, P1S, A1, A1 Mini), Creality (Ender 3 V3, K1), Anycubic, Snapmaker
+   * Filaments: PLA, ABS, PETG, TPU, Carbon Fiber, eSun Series
+   * Spares: Extruders, Hotends, Nozzles, Timing Belts, Stepper Drivers, PEI Sheets
+
+6. **Sensors**
+   * Temperature, Humidity & Pressure (DHT11/22, DS18B20, BMP280, BME680)
+   * Ultrasonic & Distance (HC-SR04, VL53L0X ToF)
+   * Motion, IMU & Accelerometers (MPU6050, PIR Sensors)
+   * Gas, Air Quality & Environmental (MQ-2, MQ-135)
+   * Optical & Proximity (LDR, IR Flame, Line Trackers)
+
+7. **Motors & Mechanical**
+   * DC Gear Motors (BO Motors, Planetary, High Torque)
+   * Stepper Motors (NEMA 17, NEMA 23)
+   * Servo Motors (SG90, MG995, MG996R)
+   * Motor Drivers (L298N, TB6600, A4988, TMC2209)
+   * Wheels, Chassis, Couplers & Brackets
+
+8. **Drone Parts**
+   * Drone Frames (F450, Q450, Carbon Fiber Racing Frames)
+   * BLDC Motors (2212 920KV, 1000KV, FPV Motors)
+   * Electronic Speed Controllers (30A SimonK, 4-in-1 ESCs)
+   * LiPo Batteries (Bonka, Witty Fox, 3S/4S/6S)
+   * Transmitters & Receivers (FlySky FS-i6X, RadioMaster)
+
+9. **Electronic Components & Modules**
+   * Microcontrollers: ESP32 (30-pin, 38-pin), ESP8266 NodeMCU, STM32 BluePill
+   * Discrete ICs, Resistors, Capacitors, LEDs, Diodes, Transistors
+   * Power Supply Modules (LM2596 Buck Converters, 5V/12V Regulators)
+
+---
+
+## 3. Homepage Layout & Section Architecture
+
+### 3.1 Layout Sections in Sequential Flow:
+1. **Header Section:** Top Announcement Bar + Main Brand Search Bar + Multi-tier Navigation Menu.
+2. **Hero Banner Carousel (`.hero-slider`):**
+   * Dynamic banner carousel featuring key promotions:
+     * Slide 1: Official Raspberry Pi 5 Launch & Bundles ("The Ultimate Maker Single-Board Computer").
+     * Slide 2: Authorized Arduino Reseller Banner ("100% Genuine Italian Boards").
+     * Slide 3: Bambu Lab & Creality 3D Printing Super Sale.
+     * Slide 4: STEM Lab Setup Solutions for Schools & Colleges.
+3. **Value Proposition Bar (`.trust-badges`):**
+   * 4-grid trust strip:
+     * 🚚 **Free Shipping** – On all orders above ₹999 across India.
+     * 🛡️ **100% Genuine** – Authorized partner for Raspberry Pi & Arduino.
+     * 🔄 **7-Day Returns** – Replacement for manufacturing defects.
+     * 📞 **Expert Support** – Direct engineering support via tickets & WhatsApp.
+4. **Shop by Popular Categories (`.featured-categories`):**
+   * 8-item circular icon/card layout:
+     * Arduino | Raspberry Pi | 3D Printers | Sensors | Drone Kits | Motors | STEM Kits | IoT Boards
+5. **Flash Deals / Trending Products Carousel (`.trending-products`):**
+   * Product cards with discount badges (`-20%`), star ratings, pricing, and "Quick Add to Cart".
+6. **Dual Category Feature Banners (`.promo-banners`):**
+   * Left: "Build Your Autonomous Drone" – Flight controllers, LiPo batteries, frames.
+   * Right: "Next-Gen 3D Printing" – Fast Bambu Lab printers & high-grade filaments.
+7. **Bestsellers Tabs Section (`.bestseller-tabs`):**
+   * Tabbed interface: "Microcontrollers", "Sensors", "Development Boards", "Robotics Kits".
+8. **Institutional & STEM Lab Showcase (`.stem-lab-banner`):**
+   * B2B section for Atal Tinkering Labs (ATL) and academic maker spaces.
+   * CTA: "Download Lab Catalog" & "Get Institutional Quote".
+9. **Recent Maker Tutorials & Articles (`.latest-blogs`):**
+   * 3-column blog preview highlighting guides like *"Arduino vs Raspberry Pi"*, *"Interfacing HC-SR04 with ESP32"*.
+10. **Customer Reviews Showcase (`.customer-reviews-widget`):**
+    * Verified buyer reviews via Stamped / Judge.me with 5-star ratings and buyer photos.
+11. **Authorized Brand Partners Carousel (`.brand-partners`):**
+    * Logos: Arduino, Raspberry Pi, Creality, Bambu Lab, Waveshare, eSun, Seeed Studio.
+12. **Site Footer:** Newsletter subscription + Multi-column links + Legal + Social icons.
+
+---
+
+## 4. Category & Collection Pages Architecture
+
+### 4.1 Sample Collection URLs:
+* `/collections/all` – Full master catalog.
+* `/collections/arduino` – Arduino boards, shields, and beginner packs.
+* `/collections/raspberry-pi` – Pi 5, Pi 4B, accessories, displays.
+* `/collections/sensors` – Temperature, distance, optical, environmental sensors.
+* `/collections/3d-printing` – Bambu Lab & Creality printers, eSun filaments.
+* `/collections/robotics` – Motors, chassis, robot arms, robotic kits.
+
+### 4.2 Two-Column Responsive Layout:
+* **Desktop (1200px+):** Left Sidebar (`25%` width, `w-1/4`), Product Grid (`75%` width, `w-3/4`).
+* **Mobile / Tablet:** Collapsible filter drawer triggered by a "Filters" button + 2-column card grid.
+
+### 4.3 Filter Sidebar Structure:
+* **Availability Filter:**
+  * `[x] In stock (142)`
+  * `[ ] Out of stock (35)`
+* **Price Range Filter:**
+  * Dual-handle slider + Min/Max numeric inputs:
+    * `Min: ₹ [ 50 ]` — `Max: ₹ [ 25,000 ]`
+    * `<button class="btn-filter-apply">Apply</button>`
+* **Brand / Vendor Filter:**
+  * `[ ] Arduino (28)`
+  * `[ ] Raspberry Pi (45)`
+  * `[ ] Waveshare (62)`
+  * `[ ] Robocraze (110)`
+  * `[ ] Creality (18)`
+* **Product Type Filter:**
+  * `[ ] Boards`, `[ ] Kits`, `[ ] Sensors`, `[ ] Accessories`
+* **Action:** "Clear All Filters" link at the top of the sidebar.
+
+### 4.4 Top Sorting & Controls Bar:
+* **Product Counter:** `Showing 1–24 of 185 products`
+* **Sort By Dropdown (`<select name="sort_by">`):**
+  * `Featured` (default)
+  * `Best Selling`
+  * `Alphabetically, A-Z`
+  * `Alphabetically, Z-A`
+  * `Price, low to high`
+  * `Price, high to low`
+  * `Date, new to old`
+  * `Date, old to new`
+
+### 4.5 Product Card Component Blueprint:
+```html
+<div class="product-card border border-gray-200 rounded-lg p-4 bg-white hover:shadow-lg transition-shadow relative flex flex-col justify-between">
+  <!-- Badges -->
+  <div class="badges absolute top-2 left-2 flex flex-col space-y-1 z-10">
+    <span class="badge bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">-18%</span>
+    <span class="badge bg-green-600 text-white text-xs font-semibold px-2 py-0.5 rounded">In Stock</span>
+  </div>
+  
+  <!-- Product Image Container -->
+  <a href="/products/arduino-uno-r3" class="product-image-wrap block relative overflow-hidden aspect-square mb-3">
+    <img src="https://cdn.shopify.com/s/files/.../arduino-uno-r3-1.jpg" alt="Arduino Uno R3" class="primary-img object-contain w-full h-full hover:scale-105 transition-transform duration-300">
+  </a>
+  
+  <!-- Details -->
+  <div class="product-info flex-grow">
+    <span class="vendor text-xs text-gray-500 uppercase tracking-wider">Arduino</span>
+    <h3 class="title text-sm font-semibold text-gray-800 line-clamp-2 mt-1 hover:text-orange-600">
+      <a href="/products/arduino-uno-r3">Arduino Uno R3 Original Board (Made in Italy)</a>
+    </h3>
+    
+    <!-- Rating -->
+    <div class="reviews flex items-center mt-1 text-xs text-yellow-500">
+      <span>★★★★★</span>
+      <span class="text-gray-500 ml-1">(48)</span>
+    </div>
+    
+    <!-- Pricing -->
+    <div class="pricing mt-2 flex items-baseline space-x-2">
+      <span class="current-price text-lg font-bold text-gray-900">₹2,199.00</span>
+      <span class="compare-price text-sm text-gray-400 line-through">₹2,699.00</span>
+    </div>
+    <span class="tax-text text-xs text-gray-500">Incl. GST (No Hidden Charges)</span>
+  </div>
+  
+  <!-- Add to Cart -->
+  <form action="/cart/add" method="post" class="mt-3">
+    <input type="hidden" name="id" value="123456789">
+    <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-4 rounded text-sm transition-colors flex items-center justify-center space-x-2">
+      <span>Add to Cart</span>
+    </button>
+  </form>
+</div>
+```
+
+### 4.6 Pagination:
+* Standard numbered pagination: `[ < Prev ] [ 1 ] [ 2 ] [ 3 ] ... [ 8 ] [ Next > ]`.
+
+---
+
+## 5. Product Detail Page (PDP) Architecture
+
+### 5.1 Evaluated Products:
+1. **Arduino Uno R3 Original Board** (`/products/arduino-uno-r3`)
+2. **Official Raspberry Pi 5 Starter Kit** (`/products/official-raspberry-pi-5-starter-kit`)
+3. **HC-SR04 Ultrasonic Distance Sensor Module** (`/products/hc-sr04-ultrasonic-distance-sensor-module`)
+
+### 5.2 Product Page Layout:
+* **Breadcrumb Navigation:**
+  `Home / Collections / Sensors / HC-SR04 Ultrasonic Distance Sensor Module`
+* **Desktop Grid:** 2 columns (Left: Gallery `50%`, Right: Buy Box & Options `50%`).
+
+### 5.3 Left Column: Image Gallery
+* Main interactive viewer with zoom on hover.
+* Horizontal thumbnail selector strip underneath.
+* Media badge overlays: "100% Genuine Certified", "Fast 24H Dispatch".
+
+### 5.4 Right Column: Buy Box & Pricing
+* **Brand / Vendor Tag:** `<a href="/collections/vendors?q=Arduino" class="text-orange-600 font-semibold text-xs">Arduino</a>`
+* **H1 Title:** `Arduino Uno R3 Original Board (Made in Italy)`
+* **Review Summary:** `★★★★★ 4.9 out of 5 stars (142 reviews) | Write a Review`
+* **SKU & Barcode:** `SKU: RC-ARD-0012` | `Barcode: 89043210012`
+* **Stock Badge:** `● In Stock (Leaves warehouse in 1-2 business days)`
+* **Price Block:**
+  * **Current Price:** `₹2,199.00`
+  * **Original Strikethrough:** `₹2,699.00`
+  * **Discount Tag:** `Save ₹500.00 (18% OFF)`
+  * **Tax Disclaimer:** `Incl. GST (No Hidden Charges)`
+* **Variant Selectors (if applicable):**
+  * Pill buttons or dropdowns (e.g. RAM: `2GB | 4GB | 8GB`, Pack Size: `1 Unit | 5 Units | 10 Units`).
+* **Wholesale / WhatsApp Prompt:**
+  * *"Need bulk quantities for school/institution? [Chat on WhatsApp for Wholesale Rates]"*
+* **Quantity Selector & Action Buttons:**
+  ```html
+  <div class="purchase-actions flex items-center space-x-3 mt-4">
+    <!-- Quantity Counter -->
+    <div class="quantity-picker flex items-center border border-gray-300 rounded">
+      <button type="button" class="px-3 py-2 text-gray-600 hover:bg-gray-100">-</button>
+      <input type="number" name="quantity" value="1" min="1" class="w-12 text-center text-sm font-semibold border-none focus:outline-none" />
+      <button type="button" class="px-3 py-2 text-gray-600 hover:bg-gray-100">+</button>
+    </div>
+    <!-- Primary CTA -->
+    <button type="submit" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded text-sm uppercase tracking-wider transition-colors">
+      Add to Cart
+    </button>
+    <!-- Buy Now Direct Checkout -->
+    <button type="button" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-6 rounded text-sm uppercase tracking-wider transition-colors">
+      Buy It Now
+    </button>
+  </div>
+  ```
+* **Pincode Delivery Estimator:**
+  * Input with "Check" button to calculate estimated delivery date based on Indian postal codes.
+* **Trust Elements Grid:**
+  * 3 icons: 100% Genuine Guarantee | 7-Day Replacement Policy | Free Shipping on orders > ₹999.
+
+### 5.5 Product Description Tabs / Accordions
+Structured below the fold:
+1. **Description Tab:** Product introduction, pinouts, working principles, target use cases.
+2. **Specifications Tab:** Formatted technical table:
+   * Operating Voltage: 5V DC
+   * Current Consumption: 15mA
+   * Measuring Range: 2cm to 400cm
+   * Accuracy: 3mm
+   * Measuring Angle: < 15°
+   * Dimensions: 45mm x 20mm x 15mm
+3. **Package Includes Tab:**
+   * Bulleted list: `1 x HC-SR04 Ultrasonic Sensor Module`
+4. **Documents & Downloads Tab:**
+   * Downloadable Datasheet PDF link.
+   * Arduino Sample Code & NewPing Library links.
+5. **Customer Reviews Section:**
+   * Review submission form, star breakdown ratings (5-star down to 1-star), customer photos, verified buyer tags.
+
+### 5.6 Related Products Section
+* Header: **"Frequently Bought Together"** or **"You May Also Like"**
+* 4-card horizontal slider featuring compatible components (e.g. for Arduino: breadboards, USB cable, jumper wires, sensor shield).
+
+---
+
+## 6. Other Key Pages
+
+### 6.1 About Us (`/pages/about-us`)
+* **Heading:** About Robocraze - India's Trusted Robotics & DIY Electronics Hub.
+* **Story & Mission:** Founded in 2015 to empower engineers, makers, and students by providing genuine parts, rapid shipping, and educational lab setups.
+* **Key Achievements:** Over 100,000+ satisfied makers, official distribution partner for Arduino and Raspberry Pi in India.
+* **Educational Impact:** Setup partner for Atal Tinkering Labs (ATL) under NITI Aayog.
+
+### 6.2 Contact Us (`/pages/contact-us`)
+* **Warehouse / Physical Address:**
+  `Ground Floor, 912/10, Survey no. 104, 4th G Street, Chelekare, Kalyan Nagar, Bengaluru, Karnataka 560043`
+* **Phone Number:** `+91 8123057137`
+* **Email:** `care@robocraze.com` / `info@robocraze.com`
+* **Interactive Elements:**
+  * Contact Form (Name, Email, Phone, Order Number, Subject, Message).
+  * Support Ticket System link.
+  * Embedded Google Map showing Kalyan Nagar, Bengaluru warehouse location.
+
+### 6.3 FAQ Page (`/pages/faq`)
+* Organized into collapsible accordions:
+  * **Orders & Payments:** Accepted payment modes (UPI, Credit/Debit cards, Netbanking, COD).
+  * **Shipping & Delivery:** Estimated delivery times (1-3 days for Bangalore/Metro, 4-7 days for other regions).
+  * **Returns & Replacements:** 7-day reporting policy for damaged or defective items.
+  * **Warranty:** Official manufacturer warranties for Arduino and Raspberry Pi.
+
+### 6.4 Policy Pages:
+* **`/policies/shipping-policy`:**
+  * Standard dispatch within 0–2 business days.
+  * Free delivery for orders above ₹999; flat standard shipping fee for orders below.
+  * Courier partners: Bluedart, Delhivery, DTDC, Xpressbees.
+* **`/policies/refund-policy`:**
+  * 7-day replacement/return window from the delivery date.
+  * Return package must include all accessories, original packaging, and serial numbers intact.
+  * Refunds processed via UPI/NEFT within 7–10 working days upon inspection.
+* **`/policies/privacy-policy`:**
+  * SSL encrypted checkout; compliance with Indian IT Act rules on user privacy.
+* **`/policies/terms-of-service`:**
+  * Standard e-commerce terms, jurisdiction subject to courts in Bengaluru, Karnataka.
+
+### 6.5 Customer Account Pages:
+* **`/account/login`:**
+  * Clean centered card: Email, Password, "Forgot your password?" link, "Sign In" button, "Don't have an account? Sign up" redirect.
+* **`/account/register`:**
+  * Form fields: First Name, Last Name, Email, Password, "Create Account" button.
+* **`/cart`:**
+  * Table with line items (Thumbnail, Name, Unit Price, Quantity picker `[- 1 +]`, Line total, Trash icon).
+  * Special instructions / Order notes textarea.
+  * Summary card on the right: Subtotal, GST calculated note, Promo code input, "Proceed to Checkout" button.
+
+### 6.6 Search Page (`/search?q=arduino`):
+* Search header: `Results for "arduino" (86 items found)`.
+* Filter chips: "All", "Products", "Blog Articles".
+* Results displayed in the standard responsive 4-column product grid with sorting options.
+
+### 6.7 Blog Section (`/blogs` or `/blogs/news`):
+* Tag filters: Arduino Projects, Raspberry Pi, Drones, IoT & Automation, Robotics.
+* Card layout: Featured Image, Category Badge, Title, Excerpt, Date & Author, "Read More" button.
+
+---
+
+## 7. Global Footer & Floating Features
+
+### 7.1 Footer Layout (4 Columns + Bottom Bar):
+* **Column 1: About & Newsletter**
+  * Logo + short brand bio.
+  * "Sign up for our newsletter: Stay updated with maker tutorials, new hardware, and exclusive discounts."
+  * Email input + "Subscribe" button.
+* **Column 2: Quick Links**
+  * About Us, Contact Us, Careers, Blogs, Track Your Order, STEM Lab Setup.
+* **Column 3: Policies & Support**
+  * Shipping Policy, Return & Refund Policy, Privacy Policy, Terms of Service, FAQs, Raise a Support Ticket.
+* **Column 4: Contact & Social Media**
+  * Address: Chelekare, Kalyan Nagar, Bengaluru, Karnataka 560043.
+  * Phone: `+91 8123057137` | Email: `care@robocraze.com`.
+  * Social Media Icons:
+    * Facebook: `facebook.com/robocraze`
+    * Instagram: `instagram.com/robocraze`
+    * YouTube: `youtube.com/@robocraze`
+    * LinkedIn: `linkedin.com/company/robocraze`
+* **Bottom Bar:**
+  * Copyright: `© 2026 Robocraze. All Rights Reserved.`
+  * Accepted Payment Icons: Visa, MasterCard, RuPay, UPI, NetBanking, Cash on Delivery.
+
+### 7.2 Floating Interactive Elements:
+* **WhatsApp / Support Chat Widget:**
+  * Fixed bottom-right icon (`position: fixed; bottom: 20px; right: 20px; z-index: 9999;`).
+  * Direct WhatsApp integration for instant order assistance and wholesale queries.
+* **Back-to-Top Button:**
+  * Appears in bottom-right corner after scrolling 400px down; smoothly scrolls to header.
+
+---
+
+## 8. Summary for Rebuilding
+With this comprehensive architectural breakdown, the site can be recreated cleanly using modern stacks (such as Next.js/Tailwind CSS, Nuxt, or a Shopify theme like Dawn) while preserving 100% of Robocraze's visual hierarchy, navigation pathways, color scheme, product catalog structure, and customer checkout flows.

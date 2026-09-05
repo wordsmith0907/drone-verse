@@ -1,0 +1,284 @@
+# Comprehensive UI/UX Design System Specification: Zbotic.in
+
+Based on thorough research and analysis of **Zbotic.in** (Moxie Supply Pvt. Ltd., Pune, running on WordPress/WooCommerce with a customized high-performance **XStore** e-commerce framework), here is the complete design specification required to rebuild the exact visual interface from scratch.
+
+---
+
+## 1. Complete Visual Design System (Colors & Tokens)
+
+### Primary Brand Palette
+*   **Deep Tech Navy (`--zb-navy`):** `#112D4E` — Main brand color used for the primary header buttons, "Shop by Category" menu, section titles, card borders/headings, primary buttons, and the main footer background.
+*   **Deep Navy Dark (`--zb-navy-dark`):** `#0B1E34` — Sub-footer bottom bar, dark dropdown shadows, and spotlight gradient end.
+*   **Navy Hover / Focus (`--zb-navy-light`):** `#1E3A5F` — Hover state for navy buttons, subtle active indicators.
+*   **Zbotic Signature Coral / Orange (`--zb-coral`):** `#E95D2A` — The signature action/accent color. Used for CTA buttons, discount badges, active tabs, underline accents on section headers, search button hover, cart/wishlist counter badges, and link hover states.
+*   **Coral Dark Hover (`--zb-coral-hover`):** `#D44E1D` — Active and hover states for primary CTA buttons.
+
+### Secondary & Functional Accents
+*   **Tech Cyan / Secondary Blue (`--zb-blue`):** `#007BC4` (or `#0D6EFD`) — Used for text links, product card category hover, search input focus outline, and technical tags.
+*   **Success / In-Stock Green (`--zb-green`):** `#11A45D` (or `#10B981`) — Used for "In Stock" availability indicators, free shipping thresholds, successful "Added to Cart" button feedback, and eco/savings badges.
+*   **Star Rating Gold (`--zb-gold`):** `#F59E0B` — 5-star product rating fill.
+*   **Alert / Danger Red (`--zb-red`):** `#EF4444` — "Out of Stock" notices, clearance badges, form error states.
+*   **WhatsApp Brand Green:** `#25D366` — Floating quick-support WhatsApp widget.
+
+### Neutral & Background Palette
+*   **Page Background (`--zb-bg-white`):** `#FFFFFF` — Pure white main content and card backgrounds.
+*   **Soft Surface Background (`--zb-bg-light`):** `#F8F9FA` — Subtle contrast background for alternating sections, filter sidebars, and trust badge cards.
+*   **Top Bar Background (`--zb-bg-topbar`):** `#F4F6F9` — Utility announcement strip background.
+*   **Dark Footer Background:** `#112D4E` (Main footer) and `#0B1E34` (Bottom copyright strip).
+
+### Typography Colors
+*   **Headings & Brand Text (`--zb-text-dark`):** `#112D4E` (Primary Navy) / `#212529` (Deep Charcoal).
+*   **Body Text (`--zb-text-body`):** `#495057` — Readable medium-dark slate for descriptions and paragraphs.
+*   **Muted Text (`--zb-text-muted`):** `#7A828A` — Used for secondary meta, SKU identifiers, timestamps, and GST tax annotations.
+*   **Subtle / Light Text (`--zb-text-light`):** `#9EA5AD` — Input placeholders, breadcrumbs, strikethrough MRP prices.
+*   **Footer Text:** `#A0AEC0` (Secondary links) and `#FFFFFF` (Headings and highlighted contacts).
+
+### Borders & Dividers
+*   **Card & Section Borders (`--zb-border`):** `#E5E8EC` (1px solid).
+*   **Subtle Dividers (`--zb-border-light`):** `#F0F2F5`.
+*   **Input & Dark Borders (`--zb-border-dark`):** `#CBD3DB`.
+*   **Accent Borders:** `#E95D2A` (2px solid underline for section headers and active tabs).
+
+---
+
+## 2. Typography
+
+*   **Primary Font Family:** `'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif`
+*   **Monospace / Technical Font (SKUs, specs):** `SFMono-Regular, Menlo, Monaco, Consolas, monospace`
+*   **Font Weights:** 400 (Regular), 500 (Medium), 600 (Semi-Bold), 700 (Bold), 800/900 (Extra Bold/Black).
+
+### Type Scale Breakdown
+| Element | Size | Weight | Line Height | Letter Spacing | Transform / Color |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Page H1 / Hero Headings** | 28px – 32px | 800 | 1.25 | normal | `#112D4E` |
+| **Section Titles (H2)** | 20px – 22px | 700 | 1.3 | 0.03em | UPPERCASE / `#112D4E` |
+| **Product Card Title** | 13.5px – 14px | 600 | 1.4 | normal | Clamped 2 lines / `#112D4E` |
+| **Card Category Tag** | 11px | 500 | 1.2 | 0.04em | UPPERCASE / `#9EA5AD` |
+| **Card Active Price** | 16.5px – 18px | 700 | 1.2 | normal | `#112D4E` |
+| **Card MRP Price (Slashed)** | 12.5px – 13px | 400 | 1.2 | normal | Strikethrough / `#9EA5AD` |
+| **Card GST Breakdown** | 11px – 11.5px | 400 | 1.2 | normal | `#7A828A` |
+| **Card Button ("Add to Cart")** | 12.5px | 700 | 1.2 | 0.04em | UPPERCASE / `#FFFFFF` |
+| **Main Nav Links** | 13.5px | 600 | 1.2 | 0.03em | UPPERCASE / `#112D4E` |
+| **"Shop by Category" Trigger** | 14px | 700 | 1.2 | 0.04em | UPPERCASE / `#FFFFFF` |
+| **Body Copy** | 14px | 400 | 1.55 | normal | `#495057` |
+| **Badges (Sale / Hot)** | 10px – 11px | 700 | 1.0 | 0.04em | UPPERCASE / `#FFFFFF` |
+| **Footer Column Headings** | 15px | 700 | 1.3 | 0.04em | UPPERCASE / `#FFFFFF` |
+
+---
+
+## 3. Layout Architecture
+
+*   **Max Container Width:** `1440px` (Inner content `1320px`), margin `0 auto`, horizontal padding `16px` (`12px` mobile).
+*   **Grid System:** Standard 12-column CSS grid / flexbox.
+
+### Header Architecture (3 Distinct Rows)
+1.  **Top Utility Bar (Height ~32px):**
+    *   Left: Contact info & hotline (`📞 020 69134444 / 1800 209 0998`, Mon–Sat 9:30 AM – 6:00 PM).
+    *   Center: Free Shipping threshold announcement (`⚡ Free Shipping on Orders Above ₹999 across India`).
+    *   Right: Quick utility links (`Track Your Order`, `B2B Wholesale / Bulk Enquiries`, `GST Invoicing`).
+2.  **Main Header Row (Height ~80px):**
+    *   **Logo Area (Left):** Modern tech "Zbotic" logo (height 44px) + vertical coral separator line + 2-line tagline (`Electronics, Robotics & 3D Printing Hub`).
+    *   **Search Engine (Center, max-width 650px):** Pill-shaped container (`border-radius: 9999px`) with `border: 2px solid #112D4E`. Contains category selector dropdown ("All Categories"), text input (`Search for products, drones, sensors, boards...`), and navy search button with magnifying glass SVG.
+    *   **User Action Cluster (Right):**
+        *   *Account:* Circular icon pill (`background: #F8F9FA`) + 2-line text ("Hello, Sign In" / "My Account").
+        *   *Wishlist:* Circular icon pill with badge counter (top-right red circle with count).
+        *   *Cart:* Circular icon pill with badge counter + 2-line text ("My Cart" / bold "₹0.00").
+3.  **Main Navigation Bar (Sticky, Height ~50px):**
+    *   **Left Anchor:** "Shop by Category" button (`width: 270px`, `background: #112D4E`, white bold text, hamburger icon on left, chevron on right).
+    *   **Center Nav Links:** Horizontal menu: `HOME`, `SHOP ALL`, `DRONE PARTS & FPV`, `3D PRINTERS`, `DEVELOPMENT BOARDS`, `SENSORS & MODULES`, `DIY KITS`, `DEALS / OFFERS`. Badges attached to links: "SALE" (green), "HOT" (coral).
+    *   **Right Anchor:** Phone Hotline / Support Pill (`Need Help? Call 1800 209 0998`).
+
+### Hero Section & Value Propositions
+*   **Hero Slider:** Full-width 1440px carousel with 5000ms autoplay, left/right circular arrow controls, and circular bottom dot indicators.
+*   **Trust Pillars Bar (Directly below hero):** 4-column horizontal card strip:
+    1.  *Free Shipping:* On prepaid orders above ₹999.
+    2.  *100% Genuine:* Authentic robotics and electronics components.
+    3.  *Same-Day Dispatch:* Shipped directly from Pune warehouse.
+    4.  *Technical Support:* Dedicated engineer assistance Mon–Sat.
+
+### Product Section Grids
+*   Desktop: 4 columns (`grid-template-columns: repeat(4, 1fr)`) or 5 columns on wide monitors.
+*   Laptop (992px – 1200px): 3 columns (`repeat(3, 1fr)`).
+*   Tablet & Mobile (<768px): 2 columns (`repeat(2, 1fr)`) with compact 10px–12px padding.
+
+---
+
+## 4. Component Designs
+
+### Buttons
+*   **Primary CTA Button:**
+    *   `background: #E95D2A; color: #FFFFFF; font-weight: 700; font-size: 13.5px; text-transform: uppercase; border-radius: 4px; padding: 12px 28px; letter-spacing: 0.04em; transition: 0.25s ease-in-out;`
+    *   Hover: `background: #D44E1D; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(233, 93, 42, 0.3);`
+*   **Product Card "Add to Cart" Button:**
+    *   `background: #112D4E; color: #FFFFFF; border: 1px solid #112D4E; border-radius: 4px; font-weight: 700; font-size: 12.5px; text-transform: uppercase; padding: 9px 12px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;`
+    *   Hover: `background: #E95D2A; border-color: #E95D2A;`
+    *   Active/Added: `background: #11A45D; border-color: #11A45D;`
+*   **Floating Quick-Action Tool Buttons (Wishlist, Quickview, Compare):**
+    *   `width: 32px; height: 32px; border-radius: 50%; background: #FFFFFF; border: 1px solid #E5E8EC; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; color: #212529;`
+    *   Hover: `background: #E95D2A; color: #FFFFFF; border-color: #E95D2A; transform: scale(1.1);`
+
+### Cards
+*   **Card Container:**
+    *   `background: #FFFFFF; border: 1px solid #E5E8EC; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; position: relative; transition: all 0.25s ease-in-out;`
+    *   Hover: `border-color: #CBD3DB; transform: translateY(-5px); box-shadow: 0 8px 24px rgba(17, 45, 78, 0.12);`
+*   **Card Image Box:**
+    *   `aspect-ratio: 1/1; padding: 16px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; overflow: hidden;`
+    *   Image zoom on card hover: `transform: scale(1.06); transition: transform 0.4s ease;`
+
+### Badges
+*   **Sale Discount Badge:**
+    *   `position: absolute; top: 10px; left: 10px; background: #E95D2A; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px; z-index: 5;`
+*   **In-Stock Badge:**
+    *   `background: #11A45D; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px;`
+*   **Header / Mobile Cart Counters:**
+    *   `width: 17px; height: 17px; border-radius: 50%; background: #E95D2A; color: #FFFFFF; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(233, 93, 42, 0.3);`
+
+### Input Fields & Search
+*   **Header Solaris Search Form:**
+    *   `border: 2px solid #112D4E; border-radius: 9999px; height: 46px; background: #FFFFFF; overflow: hidden; display: flex; align-items: center;`
+    *   Focus state: `border-color: #007BC4; box-shadow: 0 0 0 3px rgba(0, 123, 196, 0.15);`
+    *   Search Button: `background: #112D4E; color: #FFFFFF; padding: 0 24px; height: 100%;` (turns `#E95D2A` on form hover).
+
+---
+
+## 5. Spacing & Rhythm
+
+*   **Base spacing unit:** 4px / 8px grid.
+*   **Section vertical padding:** `40px 0` (standard content sections), `50px 0` (major service showcases), `30px 0` (promo banners).
+*   **Grid gap:** `20px` (desktop), `16px` (tablet), `12px` (mobile).
+*   **Card internal padding:** Image container `16px`, body content `14px 16px 16px`.
+*   **Section Header rhythm:** Title with `margin-bottom: 24px`, bottom divider line with `2px solid #F0F2F5`, and an accent `width: 80px; height: 2px; background: #E95D2A;` underline indicator.
+
+---
+
+## 6. Interactive Patterns
+
+1.  **Card Lift & Image Zoom:** Hovering anywhere on a product card elevates the card by `-5px` with a rich navy shadow (`rgba(17, 45, 78, 0.12)`) while smoothly zooming the product image by `1.06x`.
+2.  **Live Cart Counter Feedback:** Clicking "Add to Cart" provides instant optimistic UI feedback: the button turns emerald green (`#11A45D`), swaps text to `"Added ✓"`, and immediately updates both header and mobile floating badges. It reverts back after 2000ms.
+3.  **Sticky Department Navigation:** The main nav bar sticks to `top: 0` when scrolling down past the header, maintaining access to the mega menu and category search.
+4.  **Floating Quick Action Bar:** Wishlist, Quick View, and Compare circular buttons sit neatly stacked in the upper-right corner of the product image container.
+5.  **Back-to-Top Button:** Appears smoothly at `window.scrollY > 350px` in the bottom-right corner with a hover transition from navy (`#112D4E`) to coral (`#E95D2A`).
+6.  **WhatsApp Floating Concierge:** Fixed at `bottom: 24px; right: 24px;` in WhatsApp emerald green (`#25D366`), scaling up by `1.1x` on hover.
+
+---
+
+## 7. Navigation Structure & Mega Menu
+
+### Desktop Organization
+*   **"Shop by Category" Persistent Dropdown (270px width):**
+    *   Trigger: Navy button with hamburger icon and right chevron.
+    *   Main list items:
+        1.  `Drone Parts & FPV Gear`
+        2.  `Batteries, Chargers & Power`
+        3.  `Motors, Drivers & Actuators`
+        4.  `Electronic Components & Passives`
+        5.  `Sensors & Detection Modules`
+        6.  `IoT, Wireless & Microcontrollers`
+        7.  `DIY Learning & STEM Robot Kits`
+        8.  `3D Printers & Filaments`
+    *   **Flyout Mega Submenu (`width: 580px; left: 100%`):**
+        When hovering over an item like "Drone Parts", a 2-column or 3-column white flyout card opens showing grouped subcategories (e.g., *Frames & Arms*, *Flight Controllers & Stacks*, *BLHeli ESCs*, *Brushless Motors*, *FPV Cameras & VTX*, *Propellers*), each with an orange underline under the group header.
+
+### Mobile Navigation Pattern
+*   **Fixed Mobile Bottom Bar (Height ~56px):** Pinned to the screen bottom with 5 equal touch targets:
+    1.  `Home` (Icon + label)
+    2.  `Categories` (Opens off-canvas drawer)
+    3.  `Wishlist` (Icon + count badge)
+    4.  `Cart` (Icon + live count badge)
+    5.  `Account` (User profile / login)
+*   **Slide-out Off-Canvas Drawer:** Triggered from header hamburger or bottom bar, containing search, accordion-expandable categories, and policy links.
+
+---
+
+## 8. Product Card Anatomy (Exact Zbotic Layout)
+
+Within each `.zb-product-card`:
+```
+┌──────────────────────────────────────────────────┐
+│ [-20% SALE]                        [♡] [👁] [⇄] │  <-- Badges (left) & Floating tools (right)
+│                                                  │
+│               [ Product Image ]                  │  <-- 1:1 Aspect Ratio, Clean White
+│                                                  │
+├──────────────────────────────────────────────────┤
+│ DRONE MOTORS & ESC                               │  <-- Category (11px, muted slate uppercase)
+│ Flycolor Raptor 390 30A BLHeli-S ESC             │  <-- Title (13.5px, bold navy, 2-line clamp)
+│ ★★★★★ (14)                                       │  <-- Rating (Amber gold stars + review count)
+│                                                  │
+│ ₹1,499.00  ₹1,899.00                            │  <-- Active Price (16.5px bold) & MRP (slashed)
+│ (₹1,270.34 + 18% GST)                            │  <-- Signature Zbotic Dual GST breakdown
+│ SKU: AI0018                                      │  <-- SKU (11px muted)
+│                                                  │
+│ [ 🛒 ADD TO CART ]                               │  <-- Full-width Navy Button (turns Coral on hover)
+└──────────────────────────────────────────────────┘
+```
+
+---
+
+## 9. Color Reference of Key Elements
+
+| Element | Background | Text / Icon | Border | Hover State |
+| :--- | :--- | :--- | :--- | :--- |
+| **Top Announcement Bar** | `#112D4E` or `#F4F6F9` | `#FFFFFF` or `#7A828A` | `#E5E8EC` | Links turn `#E95D2A` |
+| **Main Header** | `#FFFFFF` | `#112D4E` | None | — |
+| **Search Container** | `#FFFFFF` | `#212529` | `2px solid #112D4E` | Focus: `#007BC4` |
+| **Search Button** | `#112D4E` | `#FFFFFF` | None | `background: #E95D2A` |
+| **"Shop by Category"** | `#112D4E` | `#FFFFFF` | None | `background: #E95D2A` |
+| **Main Nav Bar** | `#FFFFFF` | `#112D4E` | `1px solid #E5E8EC` | Links turn `#E95D2A` |
+| **CTA / Primary Buttons**| `#E95D2A` | `#FFFFFF` | None | `background: #D44E1D` |
+| **Card Add to Cart** | `#112D4E` | `#FFFFFF` | `1px solid #112D4E` | `background: #E95D2A` |
+| **Product Card** | `#FFFFFF` | `#112D4E` | `1px solid #E5E8EC` | Lift -5px, border `#CBD3DB` |
+| **Discount Badge** | `#E95D2A` | `#FFFFFF` | None | — |
+| **In-Stock Badge** | `#11A45D` | `#FFFFFF` | None | — |
+| **Main Footer** | `#112D4E` | `#A0AEC0` / `#FFFFFF` | Top border `rgba(255,255,255,0.12)` | Links turn `#FFFFFF` |
+| **Footer Bottom Bar**| `#0B1E34` | `#A0AEC0` | Top border `rgba(255,255,255,0.06)` | — |
+
+---
+
+## 10. Distinctive Unique Characteristics of Zbotic.in
+
+1.  **Dual GST Transparency Display:** Zbotic caters heavily to both hobbyist makers and institutional/corporate clients who claim Input Tax Credit (ITC). Product cards and checkout summaries explicitly break down `Base Price + GST %` alongside the total gross price.
+2.  **Solaris Pill Search System:** A distinctive dark navy bordered pill search form that unifies category dropdown selection with a live instant search.
+3.  **Comprehensive Engineering Documentation on Product Pages:**
+    *   Tab 1: Detailed Overview & Pinout Schematics
+    *   Tab 2: Technical Specifications table
+    *   Tab 3: "Useful Links" containing direct links to GitHub repositories, datasheets, Arduino libraries, and circuit diagrams
+    *   Tab 4: Verified Buyer Reviews
+4.  **Authorized Brand Banners:** Prominently displays authorized dealer partnerships (e.g. *Bambu Lab*, *Creality*, *Waveshare*, *Raspberry Pi Approved Reseller*, *Adafruit*).
+5.  **B2B / Volume Tier Callout:** Specific header and footer pathways for institutional purchases with volume discount tiers up to 40% and GST invoicing.
+6.  **Mobile App Integration:** Direct promotion and footer badges for the "Zbotic.in Electronics Store" app on Google Play Store and Apple App Store.
+7.  **Service Spotlight Integration:** Dedicated banners for custom 3D printing services (FDM and SLA resin) and custom PCB fabrication alongside standard retail parts.
+
+---
+
+## 11. Collection / Shop Page Layout (`/shop/` or `/collections/all`)
+
+*   **Breadcrumbs:** Clean top strip (`Home / Shop / Drone Parts`) with 12px muted links.
+*   **2-Column Layout:**
+    *   **Left Filter Sidebar (Width 270px):**
+        *   *Category Tree:* Expandable accordion with item counts (e.g. `Drone Motors (42)`).
+        *   *Price Filter:* Dual range slider with min/max numeric fields and "Filter" button.
+        *   *Stock Status:* Checkboxes for "In Stock" and "On Sale".
+        *   *Brand / Manufacturer:* Checkbox list for authorized brands.
+        *   *Specifications Filter:* KV ratings, battery voltage (2S, 4S, 6S), MCU family (STM32, ESP32, ATmega).
+    *   **Right Main Product Area:**
+        *   *Top Toolbar:* Product count notice ("Showing 1–24 of 480 results"), Grid density switchers (3-column, 4-column, list view), and sorting dropdown ("Sort by popularity", "Sort by average rating", "Sort by latest", "Sort by price: low to high", "Sort by price: high to low").
+        *   *Product Grid:* Responsive 3 or 4 columns.
+        *   *Pagination:* Numbered buttons (`1`, `2`, `3`, `...`, `Next →`), with active button styled in solid `#112D4E` or `#E95D2A`.
+
+---
+
+## 12. Footer Structure & Exact Columns
+
+*   **Footer Top Grid (4 Columns on `#112D4E`):**
+    1.  *Column 1 (Company & Mobile App):* Zbotic brand logo, summary of operations, official Android and iOS app store download buttons, and registered company address:
+        `Moxie Supply Pvt. Ltd., Goyal Industrial Complex, J-514, Gawali Matha Chowk, Telco Road, Bhosari, Pune - 411026, Maharashtra, India.`
+    2.  *Column 2 (Information & Links):* About Us, Contact Us, Engineering Blog & Tutorials, FAQs, B2B Wholesale Enquiries, Careers.
+    3.  *Column 3 (Customer Service & Legal):* Track Your Order, Shipping & Return Policy (5-day replacement), Privacy Policy, Terms & Conditions, GST Input Tax Credit Info, E-Waste Collection Points.
+    4.  *Column 4 (Newsletter & Direct Contacts):* Newsletter email input with Coral "Subscribe" button, Phone: `020 69134444` / `1800 209 0998`, Email: `support@zbotic.in` / `sales@zbotic.in`, Working Hours: `Mon–Sat 09:30 AM – 06:00 PM`.
+*   **Footer Bottom Strip (`#0B1E34`):**
+    *   Left: `© 2026 Zbotic.in (Moxie Supply Private Limited). All Rights Reserved.`
+    *   Right: Security and payment badges for UPI, Visa, MasterCard, RuPay, NetBanking, and Razorpay.
+
+---
+
+This provides every specific color code, spacing measurement, font style, and architectural component required to execute a 1:1 rebuild of the Zbotic visual experience.
