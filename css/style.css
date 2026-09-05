@@ -3270,3 +3270,525 @@ input, select, textarea {
     flex-basis: 100%;
   }
 }
+
+/* ==========================================================================
+   SUBPAGE NAVIGATION, FOOTER & CATALOG EXTENSIONS (Added for 100% UI Fidelity)
+   ========================================================================== */
+
+/* 1. Subpage Navigation Dropdown & Hotline */
+.departments-dropdown {
+  position: relative;
+  flex-shrink: 0;
+  width: 270px;
+}
+.departments-dropdown__btn {
+  background-color: var(--zb-navy);
+  color: #FFFFFF;
+  padding: 13px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: background-color var(--transition-fast);
+}
+.departments-dropdown__btn:hover {
+  background-color: var(--zb-coral);
+}
+.departments-dropdown .departments-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 270px;
+  background-color: #FFFFFF;
+  border: 1px solid var(--zb-border);
+  border-top: none;
+  box-shadow: var(--shadow-dropdown);
+  display: none;
+  z-index: 1000;
+}
+.departments-dropdown .departments-menu.is-active,
+.departments-dropdown:hover .departments-menu {
+  display: block;
+}
+.departments-menu__item {
+  border-bottom: 1px solid var(--zb-border-light);
+}
+.departments-menu__item:last-child {
+  border-bottom: none;
+}
+.departments-menu__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  color: var(--zb-text-dark);
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+.departments-menu__link:hover {
+  background-color: var(--zb-bg-light);
+  color: var(--zb-coral);
+  padding-left: 24px;
+}
+.site-nav-bar__hotline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--zb-text-dark);
+  margin-left: auto;
+}
+.site-nav-bar__hotline svg {
+  fill: var(--zb-coral);
+}
+.site-nav-bar__hotline a {
+  font-weight: 700;
+  color: var(--zb-navy);
+}
+.site-nav-bar__hotline a:hover {
+  color: var(--zb-coral);
+}
+
+/* 2. Shop Main & Faceted Category Chips */
+.shop-main {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+}
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 15px;
+}
+.category-chip {
+  display: inline-block;
+  padding: 6px 14px;
+  background: #f1f5f9;
+  border: 1px solid var(--zb-border);
+  border-radius: var(--radius-full);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--zb-text-body);
+  transition: all var(--transition-fast);
+}
+.category-chip:hover,
+.category-chip.active {
+  background: var(--zb-navy);
+  color: #ffffff;
+  border-color: var(--zb-navy);
+}
+
+/* 3. Subpage Footer Columns & Typography */
+.footer-col {
+  display: flex;
+  flex-direction: column;
+}
+.footer-col--about {
+  max-width: 380px;
+}
+.footer-logo img {
+  max-width: 180px;
+  height: auto;
+  margin-bottom: 15px;
+}
+.footer-about-text {
+  font-size: 13px;
+  color: #94A3B8;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.footer-contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.footer-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  padding-bottom: 8px;
+}
+.footer-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 35px;
+  height: 2px;
+  background-color: var(--zb-coral);
+}
+.footer-links li {
+  margin-bottom: 10px;
+}
+.footer-links a {
+  color: #94A3B8;
+  font-size: 13px;
+  transition: color var(--transition-fast);
+}
+.footer-links a:hover {
+  color: var(--zb-coral);
+}
+
+/* 4. Blog Cards for Guides & Hub */
+.blog-card {
+  background: #ffffff;
+  border: 1px solid var(--zb-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+.blog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+.blog-card__img-wrap {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+.blog-card__img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.blog-card:hover .blog-card__img-wrap img {
+  transform: scale(1.05);
+}
+.blog-card__body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.blog-card__date {
+  font-size: 12px;
+  color: var(--zb-text-muted);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.blog-card__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--zb-navy);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+.blog-card__title a {
+  color: inherit;
+}
+.blog-card__title a:hover {
+  color: var(--zb-coral);
+}
+.blog-card__excerpt {
+  font-size: 13px;
+  color: var(--zb-text-body);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  flex: 1;
+}
+.blog-card__read-more {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--zb-coral);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.blog-card__read-more:hover {
+  text-decoration: underline;
+}
+
+/* 5. Trust Items & Service Badges */
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid var(--zb-border);
+  border-radius: var(--radius-md);
+}
+.trust-item__icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+.trust-item__content {
+  display: flex;
+  flex-direction: column;
+}
+.trust-item__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--zb-navy);
+}
+.trust-item__desc {
+  font-size: 12px;
+  color: var(--zb-text-muted);
+}
+
+/* 6. Image Resilience & Placeholder Handling */
+.zb-product-card__img-wrap,
+.cat-box__img-wrap,
+.pdp-main-gallery,
+.pdp-thumb {
+  background-color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.zb-product-card__img-wrap img,
+.cat-box__img-wrap img,
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 15px;
+}
+.category-chip {
+  display: inline-block;
+  padding: 6px 14px;
+  background: #f1f5f9;
+  border: 1px solid var(--zb-border);
+  border-radius: var(--radius-full);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--zb-text-body);
+  transition: all var(--transition-fast);
+}
+.category-chip:hover,
+.category-chip.active {
+  background: var(--zb-navy);
+  color: #ffffff;
+  border-color: var(--zb-navy);
+}
+
+/* 3. Subpage Footer Columns & Typography */
+.footer-col {
+  display: flex;
+  flex-direction: column;
+}
+.footer-col--about {
+  max-width: 380px;
+}
+.footer-logo img {
+  max-width: 180px;
+  height: auto;
+  margin-bottom: 15px;
+}
+.footer-about-text {
+  font-size: 13px;
+  color: #94A3B8;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.footer-contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.footer-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  padding-bottom: 8px;
+}
+.footer-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 35px;
+  height: 2px;
+  background-color: var(--zb-coral);
+}
+.footer-links li {
+  margin-bottom: 10px;
+}
+.footer-links a {
+  color: #94A3B8;
+  font-size: 13px;
+  transition: color var(--transition-fast);
+}
+.footer-links a:hover {
+  color: var(--zb-coral);
+}
+
+/* 4. Blog Cards for Guides & Hub */
+.blog-card {
+  background: #ffffff;
+  border: 1px solid var(--zb-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+.blog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+.blog-card__img-wrap {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+.blog-card__img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.blog-card:hover .blog-card__img-wrap img {
+  transform: scale(1.05);
+}
+.blog-card__body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.blog-card__date {
+  font-size: 12px;
+  color: var(--zb-text-muted);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.blog-card__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--zb-navy);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+.blog-card__title a {
+  color: inherit;
+}
+.blog-card__title a:hover {
+  color: var(--zb-coral);
+}
+.blog-card__excerpt {
+  font-size: 13px;
+  color: var(--zb-text-body);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  flex: 1;
+}
+.blog-card__read-more {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--zb-coral);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.blog-card__read-more:hover {
+  text-decoration: underline;
+}
+
+/* 5. Trust Items & Service Badges */
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid var(--zb-border);
+  border-radius: var(--radius-md);
+}
+.trust-item__icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+.trust-item__content {
+  display: flex;
+  flex-direction: column;
+}
+.trust-item__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--zb-navy);
+}
+.trust-item__desc {
+  font-size: 12px;
+  color: var(--zb-text-muted);
+}
+
+/* 6. Image Resilience & Placeholder Handling */
+.zb-product-card__img-wrap,
+.cat-box__img-wrap,
+.pdp-main-gallery,
+.pdp-thumb {
+  background-color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.zb-product-card__img-wrap img,
+.cat-box__img-wrap img,
+.pdp-main-gallery img,
+.pdp-thumb img {
+  object-fit: contain;
+  transition: transform var(--transition-normal);
+}
+.zb-product-card:hover .zb-product-card__img-wrap img {
+  transform: scale(1.04);
+}
+
+.primary-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity var(--transition-fast);
+}
+
+.zb-product-card__pricing {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.partner-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid var(--zb-border);
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.partner-logo:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
