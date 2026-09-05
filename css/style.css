@@ -222,10 +222,18 @@ input, select, textarea {
   background-color: var(--zb-navy);
   color: #FFFFFF;
   text-align: center;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 6px 15px;
-  letter-spacing: 0.03em;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 10px 20px;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
+.notice-bar svg {
+  width: 17px;
+  height: 17px;
+  vertical-align: -2px;
+  margin-right: 6px;
 }
 
 .notice-bar a {
