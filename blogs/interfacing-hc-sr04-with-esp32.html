@@ -122,21 +122,191 @@
   </div>
 
   <div class="container static-content" style="padding-top: 30px;">
-    <h1 style="font-size: 26px; font-weight: 800; color: var(--zb-navy); margin-bottom: 14px;">Interfacing HC-SR04 Ultrasonic Distance Sensor with ESP32 via MicroPython</h1>
-    <div style="font-size: 13px; color: var(--zb-text-muted); margin-bottom: 24px;">
-      Published by <strong>DroneVerse Engineering Hub</strong> &bull; Updated September 2026
+    <h1 style="font-size: 30px; font-weight: 800; color: var(--zb-navy); margin-bottom: 12px; line-height: 1.25;">
+      Interfacing HC-SR04 Ultrasonic Distance Sensor with ESP32 via MicroPython
+    </h1>
+    <div style="font-size: 15px; color: var(--zb-text-muted); margin-bottom: 24px;">
+      Published by <strong>DroneVerse Engineering Team</strong> &bull; 7 min read &bull; Updated September 2026
     </div>
-    
-      <p>In this tutorial, we cover interfacing the classic <strong>HC-SR04 ultrasonic distance sensor</strong> with the <strong>ESP32 development board</strong> using MicroPython. Because the HC-SR04 operates at 5V logic and the ESP32 GPIO inputs are 3.3V tolerant, a simple two-resistor voltage divider (1kΩ and 2kΩ) on the Echo pin is required to protect the ESP32 input pin.</p>
-      <h3>Circuit Wiring:</h3>
-      <ul>
-        <li>HC-SR04 VCC &rarr; ESP32 VIN (5V)</li>
-        <li>HC-SR04 GND &rarr; ESP32 GND</li>
-        <li>HC-SR04 Trig &rarr; ESP32 GPIO 5</li>
-        <li>HC-SR04 Echo &rarr; Resistor Divider &rarr; ESP32 GPIO 18</li>
-      </ul>
-      <p>This setup allows high speed distance calculation accurate to within 3mm up to 4 meters.</p>
-    
+
+    <!-- Banner Image -->
+    <img src="../images/products/hc_sr04.jpg" alt="HC-SR04 Ultrasonic Distance Sensor with ESP32 MicroPython" style="width: 100%; max-height: 420px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: 28px;">
+
+    <h2>Overview &amp; Working Principle</h2>
+    <p>
+      The <strong>HC-SR04 ultrasonic distance sensor</strong> is one of the most reliable and affordable non-contact range finders in embedded electronics. Capable of measuring distances from <strong>2 cm to 400 cm</strong> with millimeter-level accuracy (&plusmn;3 mm), it is ubiquitous in autonomous mobile robots (AMRs), obstacle-avoiding quadcopters, and IoT smart bin systems.
+    </p>
+    <p>
+      The module operates on standard sonar echolocation principles. It features two silver cylindrical ultrasonic transducers (a piezo transmitter <em>"T"</em> and a piezo receiver <em>"R"</em>). When your microcontroller sends a brief 10-microsecond (10 &mu;s) HIGH pulse to the <strong>Trig</strong> pin, the sensor's onboard sonic clock automatically emits an 8-cycle sonic burst at <strong>40 kHz</strong>. The <strong>Echo</strong> pin simultaneously goes HIGH and remains HIGH until the reflected sound wave bounces back off an obstacle and strikes the receiver. The duration of this HIGH pulse is directly proportional to the round-trip distance traveled by the acoustic wave.
+    </p>
+
+    <h2>The Critical 5V to 3.3V Logic Level Problem</h2>
+    <p>
+      Before wiring the sensor to an ESP32, embedded designers must heed a crucial electrical distinction: <strong>the HC-SR04 requires a 5V VCC power supply</strong> to drive its ultrasonic transducers with enough acoustic energy. Consequently, the sensor's <strong>Echo pin emits a 5V TTL logic HIGH pulse</strong>.
+    </p>
+    <p>
+      However, the <strong>ESP32 microcontroller's GPIO pins are rated strictly for 3.3V logic</strong>. Exposing an ESP32 GPIO pin directly to 5V will inject over-voltage into the silicon substrate, causing latch-up, overheating, or permanent GPIO damage.
+    </p>
+    <p>
+      The simplest and most robust solution is a <strong>two-resistor voltage divider</strong> using standard, easily sourced 1k&Omega; and 2k&Omega; resistors (or 2.2k&Omega; and 4.7k&Omega;):
+    </p>
+    <div style="background: #F1F5F9; border-left: 4px solid var(--zb-coral); padding: 16px 20px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; margin: 20px 0;">
+      <strong>Voltage Divider Formula:</strong><br>
+      <code>V_out = V_in &times; [ R2 / (R1 + R2) ] = 5V &times; [ 2000 / (1000 + 2000) ] = 3.33 Volts</code><br>
+      This drops the 5V Echo pulse down to a safe, rock-solid 3.33V level that the ESP32 can safely read.
+    </div>
+
+    <h2>Pinout &amp; Wiring Diagram</h2>
+    <table class="pdp-specs-table">
+      <thead>
+        <tr>
+          <th>HC-SR04 Pin</th>
+          <th>ESP32 DevKit Pin</th>
+          <th>Wiring Details</th>
+          <th>Signal Function</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>VCC (5V)</strong></td>
+          <td><strong>VIN / 5V</strong></td>
+          <td>Direct jumper wire (from USB 5V rail)</td>
+          <td>Module power (5V DC, ~15 mA)</td>
+        </tr>
+        <tr>
+          <td><strong>GND (0V)</strong></td>
+          <td><strong>GND</strong></td>
+          <td>Direct jumper wire (Common ground)</td>
+          <td>Ground reference</td>
+        </tr>
+        <tr>
+          <td><strong>Trig (Trigger)</strong></td>
+          <td><strong>GPIO 5</strong></td>
+          <td>Direct wire (ESP32 output 3.3V triggers 5V CMOS input reliably)</td>
+          <td>10 &mu;s start measurement pulse</td>
+        </tr>
+        <tr>
+          <td><strong>Echo (Pulse Out)</strong></td>
+          <td><strong>GPIO 18</strong></td>
+          <td>Connect through 1k&Omega; resistor to GPIO 18, and 2k&Omega; to GND</td>
+          <td>3.3V scaled echo return pulse width</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Writing the MicroPython Driver Class</h2>
+    <p>
+      The following modular MicroPython class handles accurate timing using the ESP32's hardware microsecond counter (<code>time.ticks_us()</code> and <code>time.ticks_diff()</code>). It includes configurable timeout guards to prevent code lockups when no echo is detected.
+    </p>
+
+    <pre><code># hcsr04.py - MicroPython Driver for HC-SR04 on ESP32
+import machine
+import time
+
+class HCSR04:
+    def __init__(self, trigger_pin, echo_pin, echo_timeout_us=30000):
+        """
+        trigger_pin: Output pin number connected to HC-SR04 Trig
+        echo_pin: Input pin number connected to HC-SR04 Echo (via voltage divider)
+        echo_timeout_us: Max wait time (30000us corresponds to ~5 meters)
+        """
+        self.trigger = machine.Pin(trigger_pin, mode=machine.Pin.OUT)
+        self.echo = machine.Pin(echo_pin, mode=machine.Pin.IN)
+        self.echo_timeout_us = echo_timeout_us
+        # Initialize trigger low
+        self.trigger.value(0)
+        time.sleep_ms(50)
+
+    def distance_cm(self):
+        """Sends a 10us trigger pulse and measures round-trip distance in cm"""
+        # Ensure trigger is low
+        self.trigger.value(0)
+        time.sleep_us(5)
+        # Send 10us high pulse
+        self.trigger.value(1)
+        time.sleep_us(10)
+        self.trigger.value(0)
+
+        # Wait for echo pin to go HIGH
+        timeout_start = time.ticks_us()
+        while self.echo.value() == 0:
+            if time.ticks_diff(time.ticks_us(), timeout_start) > self.echo_timeout_us:
+                return -1 # Timeout error
+
+        # Measure duration of HIGH pulse
+        pulse_start = time.ticks_us()
+        while self.echo.value() == 1:
+            if time.ticks_diff(time.ticks_us(), pulse_start) > self.echo_timeout_us:
+                return -2 # Out of range error
+
+        pulse_end = time.ticks_us()
+        duration_us = time.ticks_diff(pulse_end, pulse_start)
+
+        # Distance = (time_in_seconds * speed_of_sound) / 2
+        # In air at 20C: Speed of sound = 343 m/s = 0.0343 cm/us
+        distance = (duration_us * 0.0343) / 2
+        return round(distance, 1)
+
+    def distance_inches(self):
+        """Returns distance converted to inches"""
+        cm = self.distance_cm()
+        if cm > 0:
+            return round(cm * 0.393701, 2)
+        return cm
+</code></pre>
+
+    <h2>Main Execution Loop</h2>
+    <p>
+      Save the driver class above to your ESP32 as <code>hcsr04.py</code> using Thonny IDE or VS Code with the MicroPico extension. Then create your <code>main.py</code>:
+    </p>
+
+    <pre><code># main.py - Continuous Obstacle Monitoring
+from hcsr04 import HCSR04
+import time
+
+# ESP32 Pin Allocation
+TRIG_PIN = 5
+ECHO_PIN = 18
+
+sensor = HCSR04(trigger_pin=TRIG_PIN, echo_pin=ECHO_PIN)
+print("DroneVerse Embedded Lab: HC-SR04 Distance Telemetry Initialized")
+
+while True:
+    dist = sensor.distance_cm()
+    if dist >= 0:
+        print(f"Target Distance: {dist:>5.1f} cm  |  {sensor.distance_inches():>5.2f} in")
+        # Example: Trigger buzzer or LED if obstacle closer than 15 cm
+        if dist < 15.0:
+            print(">>> WARNING: OBSTACLE PROXIMITY ALERT! <<<")
+    else:
+        print("Sensor reading out of range or reflection lost.")
+
+    time.sleep(0.5) # Poll at 2 Hz
+</code></pre>
+
+    <h2>Temperature Compensation Calibration</h2>
+    <p>
+      The velocity of acoustic waves through the atmosphere is dependent upon ambient temperature. If your project is operating outdoors under varying weather conditions (e.g. 5&deg;C in winter vs 42&deg;C in Indian summers), the speed of sound formula can be calibrated dynamically using an onboard temperature sensor (like the BMP280 or DHT22):
+    </p>
+    <div style="background: #F8FAFC; border: 1px solid var(--zb-border); padding: 16px 20px; border-radius: var(--radius-sm); margin: 20px 0;">
+      <code>Speed of Sound (m/s) = 331.3 + (0.606 &times; Temperature_Celsius)</code>
+    </div>
+
+    <!-- Article CTA Box -->
+    <div class="article-cta-box" style="background: var(--zb-bg-light); border: 1px solid var(--zb-border); border-radius: var(--radius-md); padding: 28px; margin-top: 36px;">
+      <h3 style="margin-top: 0; font-size: 20px; color: var(--zb-navy);">Ready to build your smart sensor project?</h3>
+      <p style="margin-bottom: 18px; font-size: 16px; color: var(--zb-text-body); line-height: 1.6;">Order genuine tested HC-SR04 ultrasonic modules, ESP32 dual-core Wi-Fi/BLE boards, and breadboard starter accessories directly from DroneVerse with same-day dispatch.</p>
+      <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+        <a href="../products/hc-sr04-ultrasonic-sensor.html" class="article-cta-btn article-cta-btn--primary">
+          <span>Buy HC-SR04 Sensor</span>
+          <svg class="cta-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="../collections/sensors.html" class="article-cta-btn article-cta-btn--secondary">
+          <span>Explore All Sensors</span>
+          <svg class="cta-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
   </div>
 
   <!-- FOOTER -->
