@@ -3210,7 +3210,7 @@ input, select, textarea {
 }
 .faq-question {
   padding: 16px 20px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--zb-navy);
   cursor: pointer;
@@ -3222,8 +3222,8 @@ input, select, textarea {
 }
 .faq-answer {
   padding: 16px 20px;
-  font-size: 13.5px;
-  line-height: 1.6;
+  font-size: 15.5px;
+  line-height: 1.65;
   color: var(--zb-text-body);
   display: none;
   border-top: 1px solid var(--zb-border-light);
