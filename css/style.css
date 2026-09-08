@@ -238,7 +238,7 @@ input, select, textarea {
   align-items: center;
   width: max-content;
   will-change: transform;
-  animation: noticeMarquee 32s linear infinite;
+  animation: noticeMarquee 34s linear infinite;
 }
 
 .notice-bar:hover .notice-bar__track {
@@ -249,6 +249,7 @@ input, select, textarea {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
+  margin: 0 35px;
   padding: 0 45px;
   white-space: nowrap;
 }
