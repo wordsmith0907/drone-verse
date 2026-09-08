@@ -2595,10 +2595,12 @@ input, select, textarea {
   font-weight: 600;
   transition: all var(--transition-fast);
   cursor: pointer;
+  text-decoration: none;
 }
 .page-btn:hover {
   border-color: var(--zb-navy);
   color: var(--zb-coral);
+  text-decoration: none;
 }
 .page-btn.active {
   background-color: var(--zb-navy);
