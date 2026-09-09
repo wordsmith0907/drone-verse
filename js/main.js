@@ -10,10 +10,15 @@ const CartStore = {
   getCart() {
     try {
       const stored = localStorage.getItem('rc_cart');
-      return stored ? JSON.parse(stored) : [
-        { id: 'RC-ARD-001', name: 'Original Arduino Uno R3 Development Board', price: 2199.00, qty: 1 },
-        { id: 'RC-SNS-001', name: 'HC-SR04 Ultrasonic Distance Sensor Module', price: 59.00, qty: 2 }
-      ];
+      if (!stored) return [];
+      let items = JSON.parse(stored);
+      if (!Array.isArray(items)) return [];
+      // Clean up legacy hardcoded demo placeholder items
+      const cleaned = items.filter(item => item.id !== 'RC-ARD-001' && item.id !== 'RC-SNS-001');
+      if (cleaned.length !== items.length) {
+        localStorage.setItem('rc_cart', JSON.stringify(cleaned));
+      }
+      return cleaned;
     } catch (e) {
       return [];
     }
@@ -26,15 +31,17 @@ const CartStore = {
       console.error('Error saving cart:', e);
     }
     this.syncBadges();
+    this.renderCartPage();
   },
 
-  addItem(id, name, price, qty = 1) {
+  addItem(id, name, price, qty = 1, img = '') {
     const items = this.getCart();
     const existing = items.find(item => item.id === id || item.name === name);
     if (existing) {
       existing.qty += qty;
+      if (img && !existing.img) existing.img = img;
     } else {
-      items.push({ id, name, price, qty });
+      items.push({ id, name, price: Number(price) || 0, qty, img });
     }
     this.saveCart(items);
   },
@@ -78,6 +85,141 @@ const CartStore = {
     if (headerCartBadge) headerCartBadge.textContent = count;
     if (mobileCartBadge) mobileCartBadge.textContent = count;
     if (headerCartTotal) headerCartTotal.textContent = formattedTotal;
+  },
+
+  renderCartPage() {
+    const container = document.getElementById('cartAppContainer');
+    if (!container) return;
+
+    const items = this.getCart();
+    if (items.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 70px 20px; background: #ffffff; border: 1px solid var(--zb-border); border-radius: var(--radius-md); max-width: 640px; margin: 20px auto 40px;">
+          <div style="width: 80px; height: 80px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--zb-navy);">
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"/>
+              <circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+          </div>
+          <h2 style="font-size: 22px; font-weight: 800; color: var(--zb-navy); margin-bottom: 8px;">Your Shopping Cart is Empty</h2>
+          <p style="font-size: 14px; color: var(--zb-text-muted); margin-bottom: 24px; line-height: 1.5;">You haven't added any products yet. Browse our professional drones, FPV racers, and accessories to get started.</p>
+          <a href="./collections/drones-and-accessories.html" class="hero-cta-button" style="display: inline-flex; text-decoration: none; padding: 12px 28px; border-radius: 9999px; font-weight: 700;">
+            <span>EXPLORE DRONES & GEAR</span>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      `;
+      return;
+    }
+
+    const subtotal = this.getSubtotal();
+    const isFreeShipping = subtotal >= 999;
+    const shippingFee = isFreeShipping ? 0 : 99;
+    const gstIncluded = (subtotal * 18) / 118;
+    const total = subtotal + shippingFee;
+
+    const rowsHtml = items.map(item => {
+      const itemImg = item.img || 'https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto/ecommerce/products/drone_skyfalcon_thermal';
+      const itemTotal = item.price * item.qty;
+      return `
+        <tr>
+          <td>
+            <div class="cart-item-flex">
+              <img src="${itemImg}" alt="${item.name}" class="cart-item-thumb" style="object-fit: cover;">
+              <div>
+                <div class="cart-item-name">${item.name}</div>
+                <div style="font-size: 11.5px; color: var(--zb-text-muted); margin-top: 4px;">SKU: ${item.id} | In Stock</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div style="font-weight: 700; color: var(--zb-navy);">₹${item.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+            <div style="font-size: 11px; color: var(--zb-text-muted);">Incl. 18% GST</div>
+          </td>
+          <td>
+            <div class="pdp-qty-picker" style="height: 38px; width: 110px;">
+              <button type="button" class="pdp-qty-btn" onclick="CartStore.updateQty('${item.id}', -1)">-</button>
+              <input type="text" class="pdp-qty-input" value="${item.qty}" readonly>
+              <button type="button" class="pdp-qty-btn" onclick="CartStore.updateQty('${item.id}', 1)">+</button>
+            </div>
+          </td>
+          <td>
+            <div style="font-weight: 800; color: var(--zb-navy); font-size: 15px;">₹${itemTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+          </td>
+          <td>
+            <button type="button" onclick="CartStore.removeItem('${item.id}')" style="background: none; border: none; color: #dc2626; cursor: pointer;" title="Remove Item">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    container.innerHTML = `
+      <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-sm); padding: 14px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 14px;">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="#1d4ed8"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+        <div>
+          <div style="font-size: 13.5px; font-weight: 700; color: #1e3a8a;">${isFreeShipping ? '🎉 Congratulations! You have unlocked FREE Express Shipping across India!' : `Add ₹${(999 - subtotal).toLocaleString('en-IN')} more to unlock FREE Express Shipping!`}</div>
+          <div style="font-size: 12px; color: #3b82f6;">All orders include GST invoices &amp; transit insurance.</div>
+        </div>
+      </div>
+
+      <div class="cart-layout">
+        <div>
+          <div class="cart-table-wrap">
+            <table class="cart-table">
+              <thead>
+                <tr>
+                  <th>Product Details</th>
+                  <th style="width: 120px;">Price</th>
+                  <th style="width: 140px;">Quantity</th>
+                  <th style="width: 120px;">Total</th>
+                  <th style="width: 50px;"></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+            </table>
+          </div>
+
+          <div style="margin-top: 20px;">
+            <label style="font-size: 13px; font-weight: 600; color: var(--zb-navy); margin-bottom: 6px; display: block;">Special Order Notes / Instructions for Dispatch:</label>
+            <textarea placeholder="e.g. Please leave package at security gate or test before dispatch..." style="width: 100%; height: 80px; padding: 10px; border: 1px solid var(--zb-border-dark); border-radius: var(--radius-sm); font-family: inherit; font-size: 13px;"></textarea>
+          </div>
+        </div>
+
+        <div>
+          <div class="cart-summary-card">
+            <h3 class="cart-summary-title">Order Summary</h3>
+            <div class="cart-summary-row">
+              <span>Subtotal (${this.getTotalCount()} items)</span>
+              <span style="font-weight: 700;">₹${subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+            </div>
+            <div class="cart-summary-row">
+              <span>Estimated Shipping</span>
+              <span style="color: var(--zb-green); font-weight: 700;">${isFreeShipping ? 'FREE' : '₹99.00'}</span>
+            </div>
+            <div class="cart-summary-row">
+              <span>GST Tax (18% Included)</span>
+              <span>₹${gstIncluded.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+            </div>
+
+            <div class="cart-summary-row total">
+              <span>Total Payable:</span>
+              <span>₹${total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+            </div>
+
+            <a href="./checkout.html" class="btn-checkout">Proceed to Checkout &rarr;</a>
+
+            <div style="margin-top: 16px; text-align: center;">
+              <a href="./collections/drones-and-accessories.html" style="font-size: 12.5px; color: var(--zb-blue); text-decoration: underline;">&larr; Continue Shopping</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
   }
 };
 
@@ -123,6 +265,28 @@ document.addEventListener('DOMContentLoaded', function() {
   // Sync state from storage
   CartStore.syncBadges();
   WishlistStore.syncBadge();
+  CartStore.renderCartPage();
+
+  // Export globals
+  window.CartStore = CartStore;
+  window.WishlistStore = WishlistStore;
+  window.DroneVerseCart = {
+    addItem(item) {
+      CartStore.addItem(item.sku || item.id, item.name, item.price, item.quantity || 1, item.image || item.img || '');
+    },
+    getCart() {
+      return CartStore.getCart();
+    }
+  };
+  window.addToCart = function(id, name, price, img) {
+    const numPrice = typeof price === 'number' ? price : parseFloat(String(price).replace(/[^0-9.]/g, '')) || 0;
+    CartStore.addItem(id, name, numPrice, 1, typeof img === 'string' ? img : '');
+    const toast = document.createElement('div');
+    toast.textContent = `✓ Added "${name}" to cart!`;
+    toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#0F172A;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:99999;box-shadow:0 8px 24px rgba(0,0,0,0.2);';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+  };
 
   // ------------------------------------------------------------------------
   // HERO BANNER SLIDER
@@ -224,81 +388,9 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // ------------------------------------------------------------------------
-  // CART PAGE TABLE INTERACTIONS (Interactive Quantity & Removal)
+  // CART PAGE INITIALIZATION
   // ------------------------------------------------------------------------
-  const cartTable = document.querySelector('.cart-table');
-  if (cartTable) {
-    const qtyInputs = cartTable.querySelectorAll('.pdp-qty-input');
-    
-    // Bind plus / minus buttons in table
-    cartTable.querySelectorAll('.cart-item-row, tr').forEach(row => {
-      const minusBtn = row.querySelector('.pdp-qty-btn:first-of-type');
-      const plusBtn = row.querySelector('.pdp-qty-btn:last-of-type');
-      const input = row.querySelector('.pdp-qty-input');
-      const removeBtn = row.querySelector('button[title="Remove Item"], .cart-item__remove');
-
-      if (minusBtn && input) {
-        minusBtn.addEventListener('click', () => {
-          let val = parseInt(input.value, 10) || 1;
-          if (val > 1) {
-            input.value = val - 1;
-            CartStore.addItem('cart-row', 'Item', 0, -1);
-            recalculateCartTable();
-          }
-        });
-      }
-
-      if (plusBtn && input) {
-        plusBtn.addEventListener('click', () => {
-          let val = parseInt(input.value, 10) || 1;
-          input.value = val + 1;
-          CartStore.addItem('cart-row', 'Item', 0, 1);
-          recalculateCartTable();
-        });
-      }
-
-      if (removeBtn) {
-        removeBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          row.style.transition = 'opacity 0.25s ease';
-          row.style.opacity = '0';
-          setTimeout(() => {
-            row.remove();
-            recalculateCartTable();
-          }, 250);
-        });
-      }
-    });
-
-    function recalculateCartTable() {
-      let subtotal = 0;
-      cartTable.querySelectorAll('tbody tr').forEach(r => {
-        const priceCell = r.querySelector('.cart-item-price, td:nth-child(2)');
-        const qtyInput = r.querySelector('.pdp-qty-input');
-        const totalCell = r.querySelector('.cart-total-val, td:nth-child(4)');
-
-        if (priceCell && qtyInput) {
-          const price = parseFloat(priceCell.textContent.replace(/[^\d.]/g, '')) || 0;
-          const qty = parseInt(qtyInput.value, 10) || 0;
-          const lineTotal = price * qty;
-          if (totalCell) {
-            totalCell.textContent = `₹${lineTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-          }
-          subtotal += lineTotal;
-        }
-      });
-
-      const summarySubtotal = document.querySelector('.cart-summary__subtotal, .summary-row:first-child span:last-child');
-      const summaryGst = document.querySelector('.cart-summary__gst, .summary-row:nth-child(2) span:last-child');
-      const summaryGrand = document.querySelector('.cart-summary-total, .summary-total span:last-child');
-
-      if (summarySubtotal) summarySubtotal.textContent = `₹${subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-      if (summaryGst) summaryGst.textContent = `₹${(subtotal * 0.18 / 1.18).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-      if (summaryGrand) summaryGrand.textContent = `₹${subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-
-      CartStore.syncBadges();
-    }
-  }
+  CartStore.renderCartPage();
 
   // ------------------------------------------------------------------------
   // SEARCH QUERY FILTERING (search.html)
