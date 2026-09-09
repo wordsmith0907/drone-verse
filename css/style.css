@@ -1297,12 +1297,27 @@ input, select, textarea {
 }
 
 .zb-product-card__badge--sale {
-  background-color: var(--zb-coral);
+  background-color: var(--zb-coral, #0066FE);
+  color: #FFFFFF;
+}
+
+.zb-product-card__badge--hot {
+  background-color: #EF4444;
   color: #FFFFFF;
 }
 
 .zb-product-card__badge--green {
-  background-color: var(--zb-green);
+  background-color: #10B981;
+  color: #FFFFFF;
+}
+
+.zb-product-card__badge--blue {
+  background-color: #2563EB;
+  color: #FFFFFF;
+}
+
+.zb-product-card__badge--amber {
+  background-color: #F59E0B;
   color: #FFFFFF;
 }
 
