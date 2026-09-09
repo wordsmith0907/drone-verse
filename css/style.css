@@ -1240,7 +1240,7 @@ input, select, textarea {
 .zb-product-card {
   background-color: #FFFFE4;
   border: 1px solid var(--zb-border);
-  border-radius: 16px;
+  border-radius: 24px;
   overflow: hidden;
   position: relative;
   display: flex;
@@ -1443,7 +1443,7 @@ input, select, textarea {
   background-color: var(--zb-navy);
   color: #FFFFFF;
   border: 1px solid var(--zb-navy);
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 12.5px;
   font-weight: 700;
   text-transform: uppercase;
@@ -3565,7 +3565,7 @@ input, select, textarea {
   color: var(--zb-text-light);
 }
 .zb-product-card__footer {
-  padding: 0 16px 16px;
+  padding: 0 18px 18px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -3599,7 +3599,7 @@ input, select, textarea {
   background-color: var(--zb-navy);
   color: #FFFFFF;
   border: 1px solid var(--zb-navy);
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 12.5px;
   font-weight: 700;
   text-transform: uppercase;
@@ -4396,7 +4396,7 @@ select:focus-visible {
 
 /* 5. Refined Product Cards & Subtle Image Padding */
 .zb-product-card {
-  border-radius: 16px;
+  border-radius: 24px;
   overflow: hidden;
   border: 1px solid var(--zb-border);
   background-color: #FFFFE4;
@@ -4410,8 +4410,8 @@ select:focus-visible {
 .zb-product-card__image-wrap,
 .zb-product-card__img-wrap {
   background-color: #FFFFE4;
-  padding: 16px;
-  border-radius: 15px 15px 0 0;
+  padding: 18px;
+  border-radius: 23px 23px 0 0;
 }
 .zb-product-card__title {
   font-family: var(--font-family-display);
