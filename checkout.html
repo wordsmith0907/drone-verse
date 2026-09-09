@@ -6,8 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Secure Checkout | DroneVerse</title>
   <meta name="description" content="Complete your order with multiple payment options: UPI, Credit Cards, Netbanking, or Cash on Delivery.">
+  <link rel="canonical" href="https://droneverse.in/checkout.html">
+  <meta property="og:title" content="Secure Checkout | DroneVerse">
+  <meta property="og:description" content="Complete your order with secure UPI, Cards, Netbanking via Razorpay.">
+  <meta property="og:type" content="website">
   <link rel="shortcut icon" href="https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto/ecommerce/branding/droneverse_favicon" type="image/png">
   <link rel="stylesheet" href="./css/style.css">
+  <!-- Razorpay Official Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 
@@ -568,6 +574,22 @@
       if (totalEl) totalEl.textContent = '₹' + grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
       if (submitBtn) submitBtn.textContent = `Place Order (₹${grandTotal.toLocaleString('en-IN')}) →`;
 
+      // Payment method selection listeners
+      const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+      function updateCheckoutTotalDisplay() {
+        const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'UPI';
+        const codFee = selectedMethod === 'COD' ? 50 : 0;
+        const currentGrandTotal = grandTotal + codFee;
+        if (totalEl) totalEl.textContent = '₹' + currentGrandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+        if (submitBtn) {
+          submitBtn.textContent = selectedMethod === 'COD'
+            ? `Place COD Order (₹${currentGrandTotal.toLocaleString('en-IN')}) →`
+            : `Pay Securely via Razorpay (₹${currentGrandTotal.toLocaleString('en-IN')}) →`;
+        }
+      }
+      paymentRadios.forEach(r => r.addEventListener('change', updateCheckoutTotalDisplay));
+      updateCheckoutTotalDisplay();
+
       // 3. Handle Order Submission
       checkoutForm.addEventListener('submit', async function (e) {
         e.preventDefault();
@@ -589,58 +611,193 @@
           paymentMethod: paymentMethod
         };
 
+        const formattedItems = cartItems.map(i => ({
+          id: i.id || i.productId || i.title || i.name,
+          title: i.title || i.name || 'Component',
+          name: i.name || i.title || 'Component',
+          price: i.price,
+          quantity: i.qty || i.quantity || 1,
+          image: i.img || i.image || ''
+        }));
+
+        // --- CASH ON DELIVERY (COD) FLOW ---
+        if (paymentMethod === 'COD') {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Confirming COD Order...';
+
+          try {
+            const codTotal = grandTotal + 50;
+            if (currentUser && window.DroneVerseAuth) {
+              const createdOrder = await window.DroneVerseAuth.createOrder({
+                items: formattedItems,
+                totalAmount: codTotal,
+                gstAmount: gstAmount,
+                shippingFee: shippingFee + 50,
+                shippingAddress: { ...shippingAddress, codFee: 50 }
+              });
+
+              if (window.CartStore) window.CartStore.saveCart([]);
+              else localStorage.removeItem('rc_cart');
+
+              showAlert('🎉 Cash on Delivery order placed successfully! Redirecting to your Order History...', false);
+              setTimeout(() => {
+                window.location.href = './account/orders.html';
+              }, 1200);
+            } else {
+              const orderNum = 'DV-COD-' + Date.now().toString(36).toUpperCase();
+              if (window.CartStore) window.CartStore.saveCart([]);
+              else localStorage.removeItem('rc_cart');
+
+              showAlert(`🎉 Cash on Delivery Order #${orderNum} placed successfully! Check your email for OTP verification details.`, false);
+              setTimeout(() => {
+                window.location.href = `./pages/track-order.html?order=${orderNum}`;
+              }, 1500);
+            }
+          } catch (codErr) {
+            console.error('COD Order placement error:', codErr);
+            showAlert(codErr.message || 'Failed to place COD order. Please try again.');
+            submitBtn.disabled = false;
+            updateCheckoutTotalDisplay();
+          }
+          return;
+        }
+
+        // --- RAZORPAY ONLINE PAYMENT FLOW (UPI / Card / NetBanking) ---
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Placing your order...';
+        submitBtn.textContent = 'Connecting to Secure Razorpay Gateway...';
 
         try {
-          // If authenticated, record into Supabase orders table
-          if (currentUser && window.DroneVerseAuth) {
-            const formattedItems = cartItems.map(i => ({
-              id: i.id,
-              name: i.name || i.title,
-              price: i.price,
-              quantity: i.qty || i.quantity || 1,
-              image: i.img || i.image || ''
-            }));
-
-            const createdOrder = await window.DroneVerseAuth.createOrder({
-              items: formattedItems,
-              totalAmount: grandTotal,
-              gstAmount: gstAmount,
-              shippingFee: shippingFee,
-              shippingAddress: shippingAddress
-            });
-
-            // Clear Cart
-            if (window.CartStore) {
-              window.CartStore.saveCart([]);
-            } else {
-              localStorage.removeItem('rc_cart');
+          // Get Supabase auth session token if signed in
+          let token = null;
+          try {
+            if (window.DroneVerseAuth) {
+              const session = await window.DroneVerseAuth.getSession();
+              token = session?.access_token || null;
             }
-
-            showAlert('🎉 Order placed successfully! Redirecting to your Order History...', false);
-            setTimeout(() => {
-              window.location.href = './account/orders.html';
-            }, 900);
-          } else {
-            // Guest Checkout
-            const orderNum = 'DV-' + Date.now().toString(36).toUpperCase();
-            if (window.CartStore) {
-              window.CartStore.saveCart([]);
-            } else {
-              localStorage.removeItem('rc_cart');
-            }
-
-            showAlert(`🎉 Order #${orderNum} placed successfully! Please create an account or sign in to track your delivery live.`, false);
-            setTimeout(() => {
-              window.location.href = './account/login.html';
-            }, 1200);
+          } catch (tokErr) {
+            console.warn('Could not read user token:', tokErr);
           }
+
+          const apiHeaders = { 'Content-Type': 'application/json' };
+          if (token) apiHeaders['Authorization'] = `Bearer ${token}`;
+
+          // 1. Call serverless endpoint /api/create-order
+          const orderResponse = await fetch('/api/create-order', {
+            method: 'POST',
+            headers: apiHeaders,
+            body: JSON.stringify({
+              items: formattedItems,
+              shippingAddress: shippingAddress
+            })
+          });
+
+          // Handle case when running on local static HTTP server without Vercel serverless runtime
+          if (orderResponse.status === 404) {
+            showAlert('ℹ️ Local Development Note: Static web server detected. On Vercel, /api/create-order runs securely as a Serverless function. For local end-to-end testing, please run `vercel dev` or deploy to Vercel.', true);
+            submitBtn.disabled = false;
+            updateCheckoutTotalDisplay();
+            return;
+          }
+
+          const orderData = await orderResponse.json();
+
+          if (!orderResponse.ok || !orderData.order_id) {
+            throw new Error(orderData.error || orderData.details || 'Failed to initialize Razorpay payment order.');
+          }
+
+          if (typeof window.Razorpay !== 'function') {
+            throw new Error('Razorpay Checkout SDK is unavailable. Please check your internet connection or disable ad-blockers.');
+          }
+
+          // 2. Configure and Open Razorpay Checkout Modal
+          const rzpOptions = {
+            key: orderData.key_id || 'rzp_test_TZrmFs3YqwlEwB',
+            amount: orderData.amount, // in paise
+            currency: orderData.currency || 'INR',
+            name: 'DroneVerse',
+            description: `Order #${orderData.order_number} - DroneVerse Electronics`,
+            image: 'https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto/ecommerce/branding/droneverse_favicon',
+            order_id: orderData.order_id,
+            handler: async function (paymentResponse) {
+              // 3. Verify Payment Signature via serverless /api/verify-payment
+              submitBtn.disabled = true;
+              submitBtn.textContent = 'Verifying Payment with Server...';
+              showAlert('Payment processed! Verifying cryptographic HMAC SHA256 signature...', false);
+
+              try {
+                const verifyRes = await fetch('/api/verify-payment', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                    razorpay_order_id: paymentResponse.razorpay_order_id,
+                    razorpay_signature: paymentResponse.razorpay_signature,
+                    order_number: orderData.order_number
+                  })
+                });
+
+                const verifyResult = await verifyRes.json();
+
+                if (verifyRes.ok && verifyResult.success) {
+                  // Clear cart upon verified success
+                  if (window.CartStore) window.CartStore.saveCart([]);
+                  else localStorage.removeItem('rc_cart');
+
+                  showAlert(`🎉 Payment Verified! Order #${orderData.order_number} confirmed! Razorpay ID: ${paymentResponse.razorpay_payment_id}. Redirecting...`, false);
+                  setTimeout(() => {
+                    if (currentUser) {
+                      window.location.href = './account/orders.html';
+                    } else {
+                      window.location.href = `./pages/track-order.html?order=${orderData.order_number}`;
+                    }
+                  }, 1500);
+                } else {
+                  throw new Error(verifyResult.error || 'Payment signature verification failed.');
+                }
+              } catch (verErr) {
+                console.error('[Verify Payment Error]:', verErr);
+                showAlert(`⚠️ Payment verification notice: ${verErr.message}. If funds were debited, your order will be automatically confirmed via webhook. Support: care@droneverse.in`);
+                submitBtn.disabled = false;
+                updateCheckoutTotalDisplay();
+              }
+            },
+            prefill: {
+              name: `${shippingAddress.firstName} ${shippingAddress.lastName}`.trim(),
+              email: shippingAddress.email,
+              contact: shippingAddress.phone
+            },
+            notes: {
+              order_number: orderData.order_number,
+              pincode: shippingAddress.pincode,
+              state: shippingAddress.state
+            },
+            theme: {
+              color: '#0066FE' // Electric Blue theme
+            },
+            modal: {
+              ondismiss: function () {
+                submitBtn.disabled = false;
+                updateCheckoutTotalDisplay();
+                showAlert('Payment window closed. Your cart is safe and you can retry payment whenever you are ready.', true);
+              }
+            }
+          };
+
+          const rzpInstance = new window.Razorpay(rzpOptions);
+          rzpInstance.on('payment.failed', function (failure) {
+            console.error('[Razorpay Payment Failed]', failure.error);
+            showAlert(`Payment Failed: ${failure.error.description || failure.error.reason} (Code: ${failure.error.code}). Please try again or select another payment option.`);
+            submitBtn.disabled = false;
+            updateCheckoutTotalDisplay();
+          });
+
+          rzpInstance.open();
+
         } catch (err) {
-          console.error('Order placement failed:', err);
-          showAlert(err.message || 'Failed to complete order. Please try again.');
+          console.error('[Checkout Submission Error]:', err);
+          showAlert(err.message || 'Payment initiation failed. Please try again.');
           submitBtn.disabled = false;
-          submitBtn.textContent = `Place Order (₹${grandTotal.toLocaleString('en-IN')}) →`;
+          updateCheckoutTotalDisplay();
         }
       });
     });

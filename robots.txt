@@ -1,0 +1,17 @@
+# Robots.txt for DroneVerse (https://droneverse.in)
+User-agent: *
+Allow: /
+Allow: /collections/
+Allow: /products/
+Allow: /blogs/
+Allow: /pages/
+Allow: /policies/
+
+# Disallow private user states and serverless API functions
+Disallow: /admin/
+Disallow: /account/
+Disallow: /cart.html
+Disallow: /checkout.html
+Disallow: /api/
+
+Sitemap: https://droneverse.in/sitemap.xml

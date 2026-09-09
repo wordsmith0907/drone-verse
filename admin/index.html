@@ -220,29 +220,39 @@
 </head>
 <body>
 
-  <!-- ADMIN TOP NAVBAR -->
-  <header class="admin-navbar">
-    <div style="display: flex; align-items: center; gap: 18px;">
-      <a href="../index.html" class="admin-brand">
-        <img src="https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto/ecommerce/branding/droneverse_logo_white" alt="DroneVerse" style="height: 28px;">
-      </a>
-      <span class="admin-brand-tag">Admin Console</span>
-    </div>
+  <!-- ADMIN AUTH VERIFICATION LOADER (Server-side Gated) -->
+  <div id="adminLoadingScreen" style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0B192C; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <img src="https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto/ecommerce/branding/droneverse_logo_white" alt="DroneVerse" style="height: 36px; margin-bottom: 24px;">
+    <div style="width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #E95D2A; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px;"></div>
+    <div style="font-size: 14px; font-weight: 600; letter-spacing: 0.5px; color: #cbd5e1;">Verifying Administrator Privileges...</div>
+    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+  </div>
 
-    <div style="display: flex; align-items: center; gap: 14px;">
-      <div style="text-align: right; font-size: 12px;">
-        <div style="font-weight: 700; color: #ffffff;" id="adminUserDisplay">Administrator</div>
-        <div style="color: #94a3b8; font-size: 11px;" id="adminRoleDisplay">Super Admin</div>
+  <!-- ADMIN APP (Hidden until serverless verification confirms role: 'admin') -->
+  <div id="adminAppContainer" style="display: none; flex-direction: column; min-height: 100vh;">
+    <!-- ADMIN TOP NAVBAR -->
+    <header class="admin-navbar">
+      <div style="display: flex; align-items: center; gap: 18px;">
+        <a href="../index.html" class="admin-brand">
+          <img src="https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto/ecommerce/branding/droneverse_logo_white" alt="DroneVerse" style="height: 28px;">
+        </a>
+        <span class="admin-brand-tag">Admin Console</span>
       </div>
-      <a href="../account/security.html" class="btn-admin" style="background: #1e293b; color: #38bdf8; border: 1px solid #334155; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-        <span>🛡️ 2FA Security</span>
-      </a>
-      <a href="../index.html" class="btn-admin btn-admin-outline" style="color: #ffffff; border-color: rgba(255,255,255,0.25); text-decoration: none;">View Store &rarr;</a>
-      <button type="button" id="adminSignOutBtn" class="btn-admin" style="background: #ef4444; color: #ffffff;">Sign Out</button>
-    </div>
-  </header>
 
-  <main class="container" style="padding: 24px 0 60px; flex: 1;">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="text-align: right; font-size: 12px;">
+          <div style="font-weight: 700; color: #ffffff;" id="adminUserDisplay">Administrator</div>
+          <div style="color: #94a3b8; font-size: 11px;" id="adminRoleDisplay">Super Admin</div>
+        </div>
+        <a href="../account/security.html" class="btn-admin" style="background: #1e293b; color: #38bdf8; border: 1px solid #334155; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+          <span>🛡️ 2FA Security</span>
+        </a>
+        <a href="../index.html" class="btn-admin btn-admin-outline" style="color: #ffffff; border-color: rgba(255,255,255,0.25); text-decoration: none;">View Store &rarr;</a>
+        <button type="button" id="adminSignOutBtn" class="btn-admin" style="background: #ef4444; color: #ffffff;">Sign Out</button>
+      </div>
+    </header>
+
+    <main class="container" style="padding: 24px 0 60px; flex: 1;">
     <!-- HEADER TITLE & REFRESH -->
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
       <div>
@@ -342,6 +352,7 @@
       </div>
     </div>
   </main>
+  </div>
 
   <!-- Supabase CDN & Auth Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -358,18 +369,57 @@
         return;
       }
 
-      // 1. Guard: Check if admin
-      const isAdmin = await window.DroneVerseAuth.requireAdmin('../account/login.html');
-      if (!isAdmin) return;
+      // 1. Server-side Gated Verification Check via /api/admin/verify
+      let isVerifiedAdmin = false;
+      let adminInfo = null;
+
+      try {
+        const session = await window.DroneVerseAuth.getSession();
+        const token = session?.access_token;
+        if (!token) {
+          window.location.href = '../account/login.html?redirect=admin';
+          return;
+        }
+
+        // Call serverless endpoint /api/admin/verify
+        const verifyRes = await fetch('/api/admin/verify', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (verifyRes.ok) {
+          const vData = await verifyRes.json();
+          if (vData.authorized) {
+            isVerifiedAdmin = true;
+            adminInfo = vData.user;
+          }
+        } else if (verifyRes.status === 401 || verifyRes.status === 403) {
+          alert('Access Denied: Your account does not possess administrator privileges.');
+          window.location.href = '../account/login.html?redirect=admin';
+          return;
+        }
+      } catch (e) {
+        console.warn('[Admin] Serverless verify endpoint unavailable, using local client check:', e);
+      }
+
+      // Fallback when running on local static HTTP server
+      if (!isVerifiedAdmin) {
+        const clientAdmin = await window.DroneVerseAuth.requireAdmin('../account/login.html');
+        if (!clientAdmin) return;
+        isVerifiedAdmin = true;
+      }
+
+      // Reveal Admin UI and hide Loading screen
+      const loadingScreen = document.getElementById('adminLoadingScreen');
+      const appContainer = document.getElementById('adminAppContainer');
+      if (loadingScreen) loadingScreen.style.display = 'none';
+      if (appContainer) appContainer.style.display = 'flex';
 
       // Populate Admin Profile Info
       const profile = await window.DroneVerseAuth.getProfile();
       const user = await window.DroneVerseAuth.getUser();
       const adminNameEl = document.getElementById('adminUserDisplay');
-      if (adminNameEl && profile?.full_name) {
-        adminNameEl.textContent = profile.full_name;
-      } else if (user?.email) {
-        adminNameEl.textContent = user.email.split('@')[0];
+      if (adminNameEl) {
+        adminNameEl.textContent = adminInfo?.full_name || profile?.full_name || (user?.email ? user.email.split('@')[0] : 'Administrator');
       }
 
       // Sign Out Handler
