@@ -161,13 +161,13 @@
 
     <div class="cart-layout">
       <!-- CHECKOUT FORM -->
-      <div style="background: #ffffff; border: 1px solid var(--zb-border); border-radius: var(--radius-md); padding: 30px;">
+      <div class="checkout-card">
         <h2 style="font-size: 18px; font-weight: 800; color: var(--zb-navy); text-transform: uppercase; margin-bottom: 20px; border-bottom: 1px solid var(--zb-border-light); padding-bottom: 10px;">
           1. Contact &amp; Delivery Address
         </h2>
 
         <form id="checkoutForm">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div class="checkout-form-row-2">
             <div>
               <label class="auth-label">First Name *</label>
               <input type="text" id="checkoutFirstName" class="auth-input" placeholder="e.g. Rahul" required>
@@ -178,7 +178,7 @@
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div class="checkout-form-row-2">
             <div>
               <label class="auth-label">Email Address (for Invoice &amp; Tracking) *</label>
               <input type="email" id="checkoutEmail" class="auth-input" placeholder="rahul.sharma@example.com" required>
@@ -194,7 +194,7 @@
             <input type="text" id="checkoutAddress" class="auth-input" placeholder="Flat 402, Green Valley Apartments, MG Road" required>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+          <div class="checkout-form-row-3">
             <div>
               <label class="auth-label">City *</label>
               <input type="text" id="checkoutCity" class="auth-input" placeholder="Gurugram" required>
@@ -235,7 +235,7 @@
           </h2>
 
           <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
-            <label style="border: 1px solid var(--zb-border); border-radius: var(--radius-sm); padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: #fff;">
+            <label class="payment-method-card">
               <span style="display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--zb-navy);">
                 <input type="radio" name="paymentMethod" value="UPI" checked>
                 <span>Instant UPI &amp; QR (Google Pay, PhonePe, Paytm, BHIM)</span>
@@ -243,7 +243,7 @@
               <span style="color: var(--zb-green); font-size: 12px; font-weight: 700;">Fastest &amp; Zero Surcharge</span>
             </label>
 
-            <label style="border: 1px solid var(--zb-border); border-radius: var(--radius-sm); padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: #fff;">
+            <label class="payment-method-card">
               <span style="display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--zb-navy);">
                 <input type="radio" name="paymentMethod" value="Card">
                 <span>Credit / Debit Cards (Visa, MasterCard, RuPay)</span>
@@ -251,7 +251,7 @@
               <span style="font-size: 12px; color: var(--zb-text-muted);">All Indian Banks</span>
             </label>
 
-            <label style="border: 1px solid var(--zb-border); border-radius: var(--radius-sm); padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: #fff;">
+            <label class="payment-method-card">
               <span style="display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--zb-navy);">
                 <input type="radio" name="paymentMethod" value="COD">
                 <span>Cash on Delivery (COD)</span>
