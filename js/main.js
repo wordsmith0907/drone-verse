@@ -165,7 +165,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (prevBtn) {
       prevBtn.addEventListener('click', () => { prevSlide(); startAutoSlide(); });
     }
-
     dots.forEach((dot) => {
       dot.addEventListener('click', () => {
         const slideIdx = parseInt(dot.getAttribute('data-slide'), 10);
@@ -173,6 +172,12 @@ document.addEventListener('DOMContentLoaded', function() {
         startAutoSlide();
       });
     });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('slide')) {
+      const targetSlide = parseInt(urlParams.get('slide'), 10);
+      if (!isNaN(targetSlide)) goToSlide(targetSlide);
+    }
 
     startAutoSlide();
   }
