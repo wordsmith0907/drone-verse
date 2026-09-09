@@ -220,6 +220,109 @@
     },
 
     /**
+     * MFA / 2FA: List enrolled factors
+     */
+    async getMFAFactors() {
+      const client = getClient();
+      if (!client) return { all: [], totp: [] };
+      try {
+        const { data, error } = await client.auth.mfa.listFactors();
+        if (error) {
+          console.warn('[Auth] listFactors error:', error.message);
+          return { all: [], totp: [] };
+        }
+        return data || { all: [], totp: [] };
+      } catch (e) {
+        return { all: [], totp: [] };
+      }
+    },
+
+    /**
+     * MFA / 2FA: Get Authenticator Assurance Level (aal1 vs aal2)
+     */
+    async getAssuranceLevel() {
+      const client = getClient();
+      if (!client) return null;
+      try {
+        const { data, error } = await client.auth.mfa.getAuthenticatorAssuranceLevel();
+        if (error) return null;
+        return data;
+      } catch (e) {
+        return null;
+      }
+    },
+
+    /**
+     * MFA / 2FA: Start TOTP enrollment (returns QR code SVG and manual secret)
+     */
+    async enrollMFA(issuer = 'DroneVerse') {
+      const client = getClient();
+      if (!client) throw new Error('Authentication client not initialized.');
+
+      // Purge any abandoned unverified factors first
+      const factors = await this.getMFAFactors();
+      for (const f of factors.all || []) {
+        if (f.status === 'unverified') {
+          try {
+            await client.auth.mfa.unenroll({ factorId: f.id });
+          } catch (_) {}
+        }
+      }
+
+      const { data, error } = await client.auth.mfa.enroll({
+        factorType: 'totp',
+        issuer: issuer,
+      });
+
+      if (error) throw error;
+      return data;
+    },
+
+    /**
+     * MFA / 2FA: Verify enrollment challenge code to activate 2FA
+     */
+    async verifyMFAEnrollment(factorId, code) {
+      const client = getClient();
+      if (!client) throw new Error('Authentication client not initialized.');
+
+      const { data, error } = await client.auth.mfa.challengeAndVerify({
+        factorId: factorId,
+        code: code.trim(),
+      });
+
+      if (error) throw error;
+      return data;
+    },
+
+    /**
+     * MFA / 2FA: Verify code on login when AAL2 is required
+     */
+    async verifyMFALogin(factorId, code) {
+      const client = getClient();
+      if (!client) throw new Error('Authentication client not initialized.');
+
+      const { data, error } = await client.auth.mfa.challengeAndVerify({
+        factorId: factorId,
+        code: code.trim(),
+      });
+
+      if (error) throw error;
+      return data;
+    },
+
+    /**
+     * MFA / 2FA: Disable / Unenroll a factor
+     */
+    async unenrollMFA(factorId) {
+      const client = getClient();
+      if (!client) throw new Error('Authentication client not initialized.');
+
+      const { data, error } = await client.auth.mfa.unenroll({ factorId });
+      if (error) throw error;
+      return data;
+    },
+
+    /**
      * Synchronize header navigation across pages
      */
     async syncNavAuthUI() {

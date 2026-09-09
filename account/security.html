@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security &amp; 2FA | DroneVerse</title>
+  <meta name="description" content="Manage Two-Factor Authentication (2FA) and account security settings.">
+  <link rel="shortcut icon" href="https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto/ecommerce/branding/droneverse_favicon" type="image/png">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .security-card {
+      background: #ffffff;
+      border: 1px solid var(--zb-border);
+      border-radius: var(--radius-md);
+      padding: 30px;
+      box-shadow: var(--shadow-sm);
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .qr-container {
+      background: #ffffff;
+      padding: 16px;
+      border: 1px solid var(--zb-border);
+      border-radius: 12px;
+      display: inline-block;
+      margin: 16px auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .qr-container svg {
+      width: 200px;
+      height: 200px;
+      display: block;
+    }
+    .secret-box {
+      background: #f8fafc;
+      border: 1px dashed var(--zb-border-dark);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--zb-navy);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin: 12px 0 20px;
+      word-break: break-all;
+    }
+    .badge-2fa {
+      display: inline-block;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-enabled {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #86efac;
+    }
+    .badge-disabled {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Notice Bar -->
+  <div class="notice-bar">
+    <div class="notice-bar__track">
+      <div class="notice-bar__item">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="display:inline-block;vertical-align:-2px;margin-right:4px;"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg> FREE SHIPPING! ₹100 OFF ON ₹999 | ₹200 OFF ON ₹2500 | ₹400 OFF ON ₹4900 &nbsp;|&nbsp; <a href="../pages/b2b-wholesale.html">Bulk Enquiries / B2B</a>
+      </div>
+      <div class="notice-bar__item" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="display:inline-block;vertical-align:-2px;margin-right:4px;"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg> FREE SHIPPING! ₹100 OFF ON ₹999 | ₹200 OFF ON ₹2500 | ₹400 OFF ON ₹4900 &nbsp;|&nbsp; <a href="../pages/b2b-wholesale.html">Bulk Enquiries / B2B</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="site-header__inner container">
+      <div class="site-header__logo-area">
+        <a href="../index.html" class="site-header__logo">
+          <img src="https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto/ecommerce/branding/droneverse_logo" alt="DroneVerse" width="200" height="41">
+        </a>
+        <div class="site-header__tagline">India's Premier Drone, Robotics &amp; AI Platform</div>
+      </div>
+
+      <div class="site-header__actions">
+        <a href="./orders.html" class="header-action-btn">
+          <div class="header-action-btn__icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+          </div>
+          <div class="header-action-btn__text">
+            <span class="header-action-btn__subtitle">Account</span>
+            <span class="header-action-btn__title">My Orders</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="breadcrumbs-bar">
+    <div class="container">
+      <ul class="breadcrumbs-list">
+        <li class="breadcrumbs-item"><a href="../index.html" class="breadcrumbs-link">Home</a></li>
+        <li class="breadcrumbs-sep">/</li>
+        <li class="breadcrumbs-item"><a href="./orders.html" class="breadcrumbs-link">Account</a></li>
+        <li class="breadcrumbs-sep">/</li>
+        <li class="breadcrumbs-item active">Two-Factor Authentication (2FA)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container" style="padding: 40px 0 80px;">
+    <div class="security-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--zb-border);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 44px; height: 44px; border-radius: 50%; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #2563eb;">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+          </div>
+          <div>
+            <h1 style="font-size: 20px; font-weight: 800; color: var(--zb-navy); margin: 0;">Two-Factor Authentication (2FA)</h1>
+            <p style="font-size: 13px; color: var(--zb-text-muted); margin: 2px 0 0;">Secure your DroneVerse account using standard TOTP authenticator apps.</p>
+          </div>
+        </div>
+        <div>
+          <span id="mfaStatusBadge" class="badge-2fa badge-disabled">Checking...</span>
+        </div>
+      </div>
+
+      <div id="securityAlert" style="display: none; padding: 12px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; margin-bottom: 20px;"></div>
+
+      <!-- State 1: 2FA NOT Enabled -->
+      <div id="mfaSetupSection" style="display: none;">
+        <p style="font-size: 14px; color: #334155; line-height: 1.6; margin-bottom: 20px;">
+          Two-Factor Authentication adds an extra layer of security to your account. In addition to your password, you will be required to enter a 6-digit verification code from your authenticator app (such as <strong>Google Authenticator</strong>, <strong>Apple Passwords / Keychain</strong>, <strong>Microsoft Authenticator</strong>, or <strong>Authy</strong>) every time you sign in.
+        </p>
+
+        <div id="enrollStartContainer" style="text-align: center; padding: 20px 0;">
+          <button type="button" id="startEnrollBtn" class="auth-btn" style="max-width: 280px; margin: 0 auto;">
+            Setup 2FA Authenticator &rarr;
+          </button>
+        </div>
+
+        <!-- Wizard Step: Scan QR and Verify -->
+        <div id="enrollActiveContainer" style="display: none; text-align: center;">
+          <h3 style="font-size: 16px; font-weight: 800; color: var(--zb-navy); margin-bottom: 6px;">Step 1: Scan this QR Code</h3>
+          <p style="font-size: 13px; color: var(--zb-text-muted); margin: 0 0 10px;">
+            Open your authenticator app and scan the QR code below:
+          </p>
+
+          <div class="qr-container" id="qrCodeTarget">
+            <!-- SVG QR code inserted dynamically -->
+          </div>
+
+          <p style="font-size: 12px; color: var(--zb-text-muted); margin-bottom: 4px;">Can't scan the QR code? Copy and paste this manual secret key into your app:</p>
+          <div class="secret-box">
+            <span id="manualSecretText">...</span>
+            <button type="button" id="copySecretBtn" style="background: var(--zb-navy); color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">Copy</button>
+          </div>
+
+          <h3 style="font-size: 16px; font-weight: 800; color: var(--zb-navy); margin: 24px 0 6px;">Step 2: Enter the 6-Digit Code</h3>
+          <p style="font-size: 13px; color: var(--zb-text-muted); margin: 0 0 16px;">
+            Enter the code generated by your authenticator app to confirm setup:
+          </p>
+
+          <form id="verifyEnrollForm" style="max-width: 320px; margin: 0 auto;">
+            <input type="text" id="enrollVerifyCodeInput" class="auth-input" placeholder="123456" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" autocomplete="one-time-code" style="text-align: center; font-size: 24px; font-weight: 800; letter-spacing: 6px; padding: 10px; margin-bottom: 16px;" required>
+            <button type="submit" id="confirmEnrollBtn" class="auth-btn">Confirm &amp; Activate 2FA</button>
+            <button type="button" id="cancelEnrollBtn" style="background: none; border: none; font-size: 12px; color: var(--zb-text-muted); cursor: pointer; text-decoration: underline; margin-top: 10px;">Cancel Setup</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- State 2: 2FA IS Enabled -->
+      <div id="mfaActiveSection" style="display: none;">
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 20px; display: flex; align-items: flex-start; gap: 14px; margin-bottom: 24px;">
+          <div style="color: #16a34a; margin-top: 2px;">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          </div>
+          <div>
+            <div style="font-size: 15px; font-weight: 800; color: #166534; margin-bottom: 4px;">Two-Factor Authentication is Active</div>
+            <div style="font-size: 13px; color: #15803d; line-height: 1.5;">
+              Your account is fully protected by Time-based One-Time Password (TOTP). A 6-digit code from your authenticator app is required whenever you sign in.
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--zb-border); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+          <div>
+            <div style="font-size: 13px; font-weight: 700; color: var(--zb-navy);">Need to disable or change your authenticator?</div>
+            <div style="font-size: 12px; color: var(--zb-text-muted);">Disabling 2FA will reduce your account security level back to password only.</div>
+          </div>
+          <div>
+            <button type="button" id="disableMfaBtn" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; border-radius: 6px; padding: 8px 16px; font-size: 12.5px; font-weight: 700; cursor: pointer;">
+              Disable 2FA
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px; text-align: center; border-top: 1px solid var(--zb-border); padding-top: 20px;">
+        <a href="./orders.html" style="color: var(--zb-coral); font-size: 13px; font-weight: 700; text-decoration: none;">&larr; Back to Order History</a>
+        &nbsp;&bull;&nbsp;
+        <a href="../admin/index.html" id="adminReturnLink" style="display: none; color: var(--zb-navy); font-size: 13px; font-weight: 700; text-decoration: none;">Admin Console &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase CDN & Auth Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/auth.js"></script>
+
+  <script>
+    let activeEnrollment = null;
+    let verifiedFactor = null;
+
+    document.addEventListener('DOMContentLoaded', async function () {
+      if (!window.DroneVerseAuth) return;
+
+      const user = await window.DroneVerseAuth.requireAuth('./login.html');
+      if (!user) return;
+
+      const profile = await window.DroneVerseAuth.getProfile();
+      if (profile && profile.role === 'admin') {
+        document.getElementById('adminReturnLink').style.display = 'inline';
+      }
+
+      await checkMfaStatus();
+
+      // Start Enroll Button
+      document.getElementById('startEnrollBtn').addEventListener('click', startEnrollment);
+
+      // Copy Secret Button
+      document.getElementById('copySecretBtn').addEventListener('click', function () {
+        const text = document.getElementById('manualSecretText').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          alert('Secret key copied to clipboard!');
+        });
+      });
+
+      // Confirm Form Submit
+      document.getElementById('verifyEnrollForm').addEventListener('submit', confirmEnrollment);
+
+      // Cancel Enroll Button
+      document.getElementById('cancelEnrollBtn').addEventListener('click', function () {
+        document.getElementById('enrollActiveContainer').style.display = 'none';
+        document.getElementById('enrollStartContainer').style.display = 'block';
+        activeEnrollment = null;
+      });
+
+      // Disable 2FA Button
+      document.getElementById('disableMfaBtn').addEventListener('click', disableMfa);
+    });
+
+    function showAlert(msg, isError = true) {
+      const box = document.getElementById('securityAlert');
+      box.style.display = 'block';
+      box.style.background = isError ? '#fee2e2' : '#dcfce7';
+      box.style.color = isError ? '#991b1b' : '#166534';
+      box.style.border = isError ? '1px solid #f87171' : '1px solid #86efac';
+      box.textContent = msg;
+    }
+
+    async function checkMfaStatus() {
+      const badge = document.getElementById('mfaStatusBadge');
+      const setupSection = document.getElementById('mfaSetupSection');
+      const activeSection = document.getElementById('mfaActiveSection');
+
+      try {
+        const factors = await window.DroneVerseAuth.getMFAFactors();
+        verifiedFactor = (factors.all || []).find(f => f.status === 'verified' && f.factor_type === 'totp');
+
+        if (verifiedFactor) {
+          badge.textContent = 'Active & Protected';
+          badge.className = 'badge-2fa badge-enabled';
+          setupSection.style.display = 'none';
+          activeSection.style.display = 'block';
+        } else {
+          badge.textContent = 'Disabled';
+          badge.className = 'badge-2fa badge-disabled';
+          setupSection.style.display = 'block';
+          activeSection.style.display = 'none';
+          document.getElementById('enrollActiveContainer').style.display = 'none';
+          document.getElementById('enrollStartContainer').style.display = 'block';
+        }
+      } catch (err) {
+        console.error('Check MFA status error:', err);
+      }
+    }
+
+    async function startEnrollment() {
+      const startBtn = document.getElementById('startEnrollBtn');
+      startBtn.disabled = true;
+      startBtn.textContent = 'Generating Secure Keys...';
+
+      try {
+        const data = await window.DroneVerseAuth.enrollMFA('DroneVerse');
+        activeEnrollment = data;
+
+        // Render QR Code SVG
+        const qrContainer = document.getElementById('qrCodeTarget');
+        if (data.totp && data.totp.qr_code) {
+          qrContainer.innerHTML = data.totp.qr_code;
+        }
+
+        // Render Secret
+        document.getElementById('manualSecretText').textContent = data.totp?.secret || '';
+
+        document.getElementById('enrollStartContainer').style.display = 'none';
+        document.getElementById('enrollActiveContainer').style.display = 'block';
+        document.getElementById('enrollVerifyCodeInput').value = '';
+        document.getElementById('enrollVerifyCodeInput').focus();
+      } catch (err) {
+        console.error('Enroll error:', err);
+        showAlert(err.message || 'Failed to initialize 2FA enrollment.');
+      } finally {
+        startBtn.disabled = false;
+        startBtn.textContent = 'Setup 2FA Authenticator →';
+      }
+    }
+
+    async function confirmEnrollment(e) {
+      e.preventDefault();
+      const codeInput = document.getElementById('enrollVerifyCodeInput');
+      const confirmBtn = document.getElementById('confirmEnrollBtn');
+      const code = codeInput.value.trim();
+
+      if (!activeEnrollment || !code || code.length !== 6) {
+        showAlert('Please enter the full 6-digit code from your authenticator app.');
+        return;
+      }
+
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = 'Verifying Code...';
+
+      try {
+        await window.DroneVerseAuth.verifyMFAEnrollment(activeEnrollment.id, code);
+        showAlert('🎉 Two-Factor Authentication has been successfully enabled on your account!', false);
+        await checkMfaStatus();
+      } catch (err) {
+        console.error('Verification error:', err);
+        showAlert(err.message || 'Invalid verification code. Please make sure your app code is current and try again.');
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Confirm & Activate 2FA';
+        codeInput.select();
+      }
+    }
+
+    async function disableMfa() {
+      if (!verifiedFactor) return;
+
+      const confirmDisable = confirm('Are you sure you want to disable Two-Factor Authentication? Your account will only be protected by password.');
+      if (!confirmDisable) return;
+
+      const disableBtn = document.getElementById('disableMfaBtn');
+      disableBtn.disabled = true;
+      disableBtn.textContent = 'Disabling...';
+
+      try {
+        await window.DroneVerseAuth.unenrollMFA(verifiedFactor.id);
+        showAlert('Two-Factor Authentication has been disabled.', false);
+        await checkMfaStatus();
+      } catch (err) {
+        console.error('Disable error:', err);
+        showAlert(err.message || 'Failed to disable 2FA.');
+      } finally {
+        disableBtn.disabled = false;
+        disableBtn.textContent = 'Disable 2FA';
+      }
+    }
+  </script>
+</body>
+</html>

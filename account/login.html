@@ -145,7 +145,28 @@
         <button type="submit" id="loginSubmitBtn" class="auth-btn">Sign In</button>
       </form>
 
-      <div class="auth-switch">
+      <!-- 2FA VERIFICATION FORM (Shown only if account has 2FA enabled) -->
+      <form id="mfaLoginForm" style="display: none;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="width: 52px; height: 52px; margin: 0 auto 12px; border-radius: 50%; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #2563eb;">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+          </div>
+          <h2 style="font-size: 18px; font-weight: 800; color: var(--zb-navy); margin-bottom: 4px;">Two-Factor Authentication</h2>
+          <p style="font-size: 13px; color: var(--zb-text-muted); margin: 0;">Enter the 6-digit verification code from your Authenticator app (Google Authenticator, Apple Passwords, Authy).</p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <input type="text" id="mfaCodeInput" class="auth-input" placeholder="123456" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" autocomplete="one-time-code" style="text-align: center; font-size: 24px; font-weight: 800; letter-spacing: 6px; padding: 12px;" required>
+        </div>
+
+        <button type="submit" id="mfaSubmitBtn" class="auth-btn">Verify &amp; Enter &rarr;</button>
+
+        <div style="text-align: center; margin-top: 14px;">
+          <button type="button" id="mfaCancelBtn" style="background: none; border: none; font-size: 12.5px; color: var(--zb-text-muted); cursor: pointer; text-decoration: underline;">&larr; Cancel &amp; Back to Login</button>
+        </div>
+      </form>
+
+      <div class="auth-switch" id="authSwitchContainer">
         Don't have an account yet? <a href="./register.html" style="color: var(--zb-coral); font-weight: 700;">Create Account &rarr;</a>
       </div>
     </div>
@@ -344,6 +365,21 @@
         alertBox.textContent = msg;
       }
 
+      let pendingMfaFactorId = null;
+
+      async function proceedRedirect() {
+        showAlert('Authentication verified! Redirecting...', false);
+        const profile = await window.DroneVerseAuth.getProfile();
+        setTimeout(() => {
+          if (profile && profile.role === 'admin') {
+            window.location.href = '../admin/index.html';
+          } else {
+            window.location.href = './orders.html';
+          }
+        }, 500);
+      }
+
+      // Handle Initial Password Login
       loginForm.addEventListener('submit', async function (e) {
         e.preventDefault();
         alertBox.style.display = 'none';
@@ -359,23 +395,77 @@
             throw new Error('Auth module is loading. Please try again in a second.');
           }
 
-          const res = await window.DroneVerseAuth.signIn(email, password);
-          showAlert('Login successful! Redirecting...', false);
+          await window.DroneVerseAuth.signIn(email, password);
 
-          const profile = await window.DroneVerseAuth.getProfile();
-          setTimeout(() => {
-            if (profile && profile.role === 'admin') {
-              window.location.href = '../admin/index.html';
-            } else {
-              window.location.href = './orders.html';
+          // Check if 2FA (AAL2) is required
+          const aal = await window.DroneVerseAuth.getAssuranceLevel();
+          if (aal && aal.nextLevel === 'aal2' && aal.currentLevel !== 'aal2') {
+            const factors = await window.DroneVerseAuth.getMFAFactors();
+            const verifiedFactor = (factors.all || []).find(f => f.status === 'verified' && f.factor_type === 'totp');
+            
+            if (verifiedFactor) {
+              pendingMfaFactorId = verifiedFactor.id;
+              // Transition to 2FA screen
+              loginForm.style.display = 'none';
+              document.getElementById('authSwitchContainer').style.display = 'none';
+              const mfaForm = document.getElementById('mfaLoginForm');
+              mfaForm.style.display = 'block';
+              document.getElementById('mfaCodeInput').value = '';
+              document.getElementById('mfaCodeInput').focus();
+              return;
             }
-          }, 600);
+          }
+
+          // No 2FA required
+          await proceedRedirect();
         } catch (err) {
           console.error('Sign in error:', err);
           showAlert(err.message || 'Invalid email or password. Please try again.');
           submitBtn.disabled = false;
           submitBtn.textContent = 'Sign In';
         }
+      });
+
+      // Handle 2FA Code Submission
+      const mfaForm = document.getElementById('mfaLoginForm');
+      const mfaCodeInput = document.getElementById('mfaCodeInput');
+      const mfaSubmitBtn = document.getElementById('mfaSubmitBtn');
+      const mfaCancelBtn = document.getElementById('mfaCancelBtn');
+
+      mfaForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        alertBox.style.display = 'none';
+
+        const code = mfaCodeInput.value.trim();
+        if (!code || code.length !== 6) {
+          showAlert('Please enter the full 6-digit code from your authenticator app.');
+          return;
+        }
+
+        mfaSubmitBtn.disabled = true;
+        mfaSubmitBtn.textContent = 'Verifying security code...';
+
+        try {
+          await window.DroneVerseAuth.verifyMFALogin(pendingMfaFactorId, code);
+          await proceedRedirect();
+        } catch (err) {
+          console.error('2FA verification error:', err);
+          showAlert(err.message || 'Invalid 6-digit security code. Please check your authenticator app and try again.');
+          mfaSubmitBtn.disabled = false;
+          mfaSubmitBtn.textContent = 'Verify & Enter →';
+          mfaCodeInput.select();
+        }
+      });
+
+      // Cancel 2FA and return to password login
+      mfaCancelBtn.addEventListener('click', async function () {
+        await window.DroneVerseAuth.signOut();
+        mfaForm.style.display = 'none';
+        loginForm.style.display = 'block';
+        document.getElementById('authSwitchContainer').style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In';
+        alertBox.style.display = 'none';
       });
     });
   </script>
