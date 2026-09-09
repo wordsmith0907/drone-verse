@@ -128,30 +128,32 @@
       <h1 class="auth-title">Create Account</h1>
       <p class="auth-subtitle">Get access to order tracking, GST invoices, and maker perks</p>
 
-      <form onsubmit="alert('Account creation simulated! Redirecting to login.'); window.location.href='./login.html'; return false;">
+      <div id="registerAlert" style="display: none; padding: 12px 14px; margin-bottom: 16px; border-radius: 6px; font-size: 13px; line-height: 1.4;"></div>
+
+      <form id="registerForm">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;" class="auth-form-group">
           <div>
             <label class="auth-label">First Name *</label>
-            <input type="text" class="auth-input" required>
+            <input type="text" id="regFirstName" class="auth-input" required autocomplete="given-name">
           </div>
           <div>
             <label class="auth-label">Last Name *</label>
-            <input type="text" class="auth-input" required>
+            <input type="text" id="regLastName" class="auth-input" required autocomplete="family-name">
           </div>
         </div>
         <div class="auth-form-group">
           <label class="auth-label">Email Address *</label>
-          <input type="email" class="auth-input" required>
+          <input type="email" id="regEmail" class="auth-input" required autocomplete="email">
         </div>
         <div class="auth-form-group">
           <label class="auth-label">Mobile Number (WhatsApp updates) *</label>
-          <input type="tel" class="auth-input" placeholder="+91 " required>
+          <input type="tel" id="regPhone" class="auth-input" placeholder="+91 9876543210" required autocomplete="tel">
         </div>
         <div class="auth-form-group">
           <label class="auth-label">Password *</label>
-          <input type="password" class="auth-input" placeholder="At least 6 characters" required>
+          <input type="password" id="regPassword" class="auth-input" placeholder="At least 6 characters" minlength="6" required autocomplete="new-password">
         </div>
-        <button type="submit" class="auth-btn">Create Account</button>
+        <button type="submit" id="registerSubmitBtn" class="auth-btn">Create Account</button>
       </form>
 
       <div class="auth-switch">
@@ -315,5 +317,75 @@
   </button>
 
   <script src="../js/main.js"></script>
+
+  <!-- Supabase CDN & Auth Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/auth.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const registerForm = document.getElementById('registerForm');
+      const firstNameInput = document.getElementById('regFirstName');
+      const lastNameInput = document.getElementById('regLastName');
+      const emailInput = document.getElementById('regEmail');
+      const phoneInput = document.getElementById('regPhone');
+      const passInput = document.getElementById('regPassword');
+      const submitBtn = document.getElementById('registerSubmitBtn');
+      const alertBox = document.getElementById('registerAlert');
+
+      function showAlert(msg, isError = true) {
+        alertBox.style.display = 'block';
+        alertBox.style.background = isError ? '#fee2e2' : '#dcfce7';
+        alertBox.style.color = isError ? '#991b1b' : '#166534';
+        alertBox.style.border = isError ? '1px solid #f87171' : '1px solid #86efac';
+        alertBox.textContent = msg;
+      }
+
+      registerForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        alertBox.style.display = 'none';
+
+        const fullName = `${firstNameInput.value.trim()} ${lastNameInput.value.trim()}`.trim();
+        const email = emailInput.value.trim();
+        const phone = phoneInput.value.trim();
+        const password = passInput.value;
+
+        if (password.length < 6) {
+          showAlert('Password must be at least 6 characters long.');
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating account...';
+
+        try {
+          if (!window.DroneVerseAuth) {
+            throw new Error('Authentication module is initializing. Please retry in a moment.');
+          }
+
+          const res = await window.DroneVerseAuth.signUp(email, password, fullName, phone);
+          
+          if (res.session) {
+            showAlert('Account created successfully! Redirecting to orders...', false);
+            setTimeout(() => {
+              window.location.href = './orders.html';
+            }, 800);
+          } else {
+            showAlert('Account created! Please check your email to confirm registration or sign in.', false);
+            setTimeout(() => {
+              window.location.href = './login.html';
+            }, 2000);
+          }
+        } catch (err) {
+          console.error('Registration error:', err);
+          showAlert(err.message || 'Failed to create account. Please check your details.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Account';
+        }
+      });
+    });
+  </script>
 </body>
 </html>

@@ -160,45 +160,46 @@
           1. Contact &amp; Delivery Address
         </h2>
 
-        <form onsubmit="alert('Order placed successfully! In demonstration mode, your mock order ID is #RC-98422.'); return false;">
+        <form id="checkoutForm">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
             <div>
               <label class="auth-label">First Name *</label>
-              <input type="text" class="auth-input" placeholder="e.g. Rahul" required>
+              <input type="text" id="checkoutFirstName" class="auth-input" placeholder="e.g. Rahul" required>
             </div>
             <div>
               <label class="auth-label">Last Name *</label>
-              <input type="text" class="auth-input" placeholder="e.g. Sharma" required>
+              <input type="text" id="checkoutLastName" class="auth-input" placeholder="e.g. Sharma" required>
             </div>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
             <div>
               <label class="auth-label">Email Address (for Invoice &amp; Tracking) *</label>
-              <input type="email" class="auth-input" placeholder="rahul.sharma@example.com" required>
+              <input type="email" id="checkoutEmail" class="auth-input" placeholder="rahul.sharma@example.com" required>
             </div>
             <div>
               <label class="auth-label">Mobile Phone (for Delivery OTP &amp; WhatsApp) *</label>
-              <input type="tel" class="auth-input" placeholder="+91 9876543210" required>
+              <input type="tel" id="checkoutPhone" class="auth-input" placeholder="+91 9876543210" required>
             </div>
           </div>
 
           <div style="margin-bottom: 16px;">
             <label class="auth-label">Flat / House No. / Building / Street Address *</label>
-            <input type="text" class="auth-input" placeholder="Flat 402, Green Valley Apartments, MG Road" required>
+            <input type="text" id="checkoutAddress" class="auth-input" placeholder="Flat 402, Green Valley Apartments, MG Road" required>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px;">
             <div>
               <label class="auth-label">City *</label>
-              <input type="text" class="auth-input" placeholder="Gurugram" required>
+              <input type="text" id="checkoutCity" class="auth-input" placeholder="Gurugram" required>
             </div>
             <div>
               <label class="auth-label">State *</label>
-              <select class="auth-input" required>
+              <select id="checkoutState" class="auth-input" required>
                 <option value="Karnataka">Karnataka</option>
                 <option value="Maharashtra">Maharashtra</option>
                 <option value="Delhi">Delhi</option>
+                <option value="Haryana" selected>Haryana</option>
                 <option value="Tamil Nadu">Tamil Nadu</option>
                 <option value="Telangana">Telangana</option>
                 <option value="Gujarat">Gujarat</option>
@@ -207,7 +208,7 @@
             </div>
             <div>
               <label class="auth-label">Postal Pincode *</label>
-              <input type="text" class="auth-input" placeholder="122015" maxlength="6" required>
+              <input type="text" id="checkoutPincode" class="auth-input" placeholder="122015" maxlength="6" required>
             </div>
           </div>
 
@@ -218,7 +219,7 @@
               <span>Claim GST Input Tax Credit (ITC)? (Optional for Businesses)</span>
             </label>
             <div style="margin-top: 10px;">
-              <input type="text" class="auth-input" placeholder="Enter Company 15-digit GSTIN (e.g. 29ABCDE1234F1Z5)">
+              <input type="text" id="checkoutGstin" class="auth-input" placeholder="Enter Company 15-digit GSTIN (e.g. 29ABCDE1234F1Z5)">
             </div>
           </div>
 
@@ -230,7 +231,7 @@
           <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
             <label style="border: 1px solid var(--zb-border); border-radius: var(--radius-sm); padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: #fff;">
               <span style="display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--zb-navy);">
-                <input type="radio" name="paymentMethod" checked>
+                <input type="radio" name="paymentMethod" value="UPI" checked>
                 <span>Instant UPI &amp; QR (Google Pay, PhonePe, Paytm, BHIM)</span>
               </span>
               <span style="color: var(--zb-green); font-size: 12px; font-weight: 700;">Fastest &amp; Zero Surcharge</span>
@@ -238,7 +239,7 @@
 
             <label style="border: 1px solid var(--zb-border); border-radius: var(--radius-sm); padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: #fff;">
               <span style="display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--zb-navy);">
-                <input type="radio" name="paymentMethod">
+                <input type="radio" name="paymentMethod" value="Card">
                 <span>Credit / Debit Cards (Visa, MasterCard, RuPay)</span>
               </span>
               <span style="font-size: 12px; color: var(--zb-text-muted);">All Indian Banks</span>
@@ -246,15 +247,17 @@
 
             <label style="border: 1px solid var(--zb-border); border-radius: var(--radius-sm); padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: #fff;">
               <span style="display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--zb-navy);">
-                <input type="radio" name="paymentMethod">
+                <input type="radio" name="paymentMethod" value="COD">
                 <span>Cash on Delivery (COD)</span>
               </span>
               <span style="font-size: 12px; color: var(--zb-text-muted);">+₹50 handling fee</span>
             </label>
           </div>
 
-          <button type="submit" class="btn-checkout" style="font-size: 15px; padding: 16px;">
-            Place Order (₹2,277.00) &rarr;
+          <div id="checkoutAlert" style="display: none; padding: 12px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; margin-bottom: 16px;"></div>
+
+          <button type="submit" id="checkoutSubmitBtn" class="btn-checkout" style="font-size: 15px; padding: 16px;">
+            Place Order &rarr;
           </button>
         </form>
       </div>
@@ -262,41 +265,29 @@
       <!-- SUMMARY SIDEBAR -->
       <div>
         <div class="cart-summary-card">
-          <h3 class="cart-summary-title">Order Items (2)</h3>
+          <h3 class="cart-summary-title" id="checkoutItemsHeader">Order Items</h3>
           
-          <div style="display: flex; gap: 10px; margin-bottom: 12px; font-size: 13px;">
-            <img src="https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto/ecommerce/products/arduino_uno_r3" width="45" height="45" style="object-fit: contain; border: 1px solid var(--zb-border); border-radius: 4px;" srcset="https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto,w_400/ecommerce/products/arduino_uno_r3 400w, https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto,w_800/ecommerce/products/arduino_uno_r3 800w" sizes="(max-width: 600px) 400px, 800px">
-            <div style="flex: 1;">
-              <div style="font-weight: 600; line-height: 1.3;">Arduino Uno R3 (Italy)</div>
-              <div style="color: var(--zb-text-muted); font-size: 11px;">Qty: 1</div>
+          <div id="checkoutItemsContainer">
+            <div style="padding: 20px 0; text-align: center; color: var(--zb-text-muted); font-size: 13px;">
+              Loading cart items...
             </div>
-            <div style="font-weight: 700;">₹2,199.00</div>
           </div>
 
-          <div style="display: flex; gap: 10px; margin-bottom: 16px; font-size: 13px;">
-            <img src="https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto/ecommerce/products/hc_sr04" width="45" height="45" style="object-fit: contain; border: 1px solid var(--zb-border); border-radius: 4px;" srcset="https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto,w_400/ecommerce/products/hc_sr04 400w, https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto,w_800/ecommerce/products/hc_sr04 800w" sizes="(max-width: 600px) 400px, 800px">
-            <div style="flex: 1;">
-              <div style="font-weight: 600; line-height: 1.3;">HC-SR04 Ultrasonic Sensor</div>
-              <div style="color: var(--zb-text-muted); font-size: 11px;">Qty: 2</div>
-            </div>
-            <div style="font-weight: 700;">₹178.00</div>
-          </div>
-
-          <div class="cart-summary-row">
+          <div class="cart-summary-row" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--zb-border-light);">
             <span>Subtotal</span>
-            <span>₹2,377.00</span>
-          </div>
-          <div class="cart-summary-row">
-            <span>Coupon Discount</span>
-            <span style="color: #dc2626;">-₹100.00</span>
+            <span id="checkoutSubtotal" style="font-weight: 700;">₹0.00</span>
           </div>
           <div class="cart-summary-row">
             <span>Express Shipping</span>
-            <span style="color: var(--zb-green); font-weight: 700;">FREE</span>
+            <span id="checkoutShipping" style="color: var(--zb-green); font-weight: 700;">FREE</span>
+          </div>
+          <div class="cart-summary-row">
+            <span>GST Included (18%)</span>
+            <span id="checkoutGst">₹0.00</span>
           </div>
           <div class="cart-summary-row total">
             <span>Total:</span>
-            <span>₹2,277.00</span>
+            <span id="checkoutTotal">₹0.00</span>
           </div>
 
           <div style="margin-top: 16px; font-size: 11.5px; color: var(--zb-text-muted); line-height: 1.5; text-align: center;">
@@ -463,5 +454,196 @@
   </button>
 
   <script src="./js/main.js"></script>
+
+  <!-- Supabase CDN & Auth Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/supabase-config.js"></script>
+  <script src="./js/supabase-client.js"></script>
+  <script src="./js/auth.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      const checkoutForm = document.getElementById('checkoutForm');
+      const submitBtn = document.getElementById('checkoutSubmitBtn');
+      const alertBox = document.getElementById('checkoutAlert');
+
+      const itemsHeader = document.getElementById('checkoutItemsHeader');
+      const itemsContainer = document.getElementById('checkoutItemsContainer');
+      const subtotalEl = document.getElementById('checkoutSubtotal');
+      const shippingEl = document.getElementById('checkoutShipping');
+      const gstEl = document.getElementById('checkoutGst');
+      const totalEl = document.getElementById('checkoutTotal');
+
+      function showAlert(msg, isError = true) {
+        alertBox.style.display = 'block';
+        alertBox.style.background = isError ? '#fee2e2' : '#dcfce7';
+        alertBox.style.color = isError ? '#991b1b' : '#166534';
+        alertBox.style.border = isError ? '1px solid #f87171' : '1px solid #86efac';
+        alertBox.textContent = msg;
+      }
+
+      // 1. Check if user is logged in -> Auto-fill contact info
+      let currentUser = null;
+      let currentProfile = null;
+      try {
+        if (window.DroneVerseAuth) {
+          currentUser = await window.DroneVerseAuth.getUser();
+          if (currentUser) {
+            currentProfile = await window.DroneVerseAuth.getProfile();
+            const fullName = currentProfile?.full_name || currentUser.user_metadata?.full_name || '';
+            const names = fullName.trim().split(' ');
+            if (names[0]) document.getElementById('checkoutFirstName').value = names[0];
+            if (names.slice(1).join(' ')) document.getElementById('checkoutLastName').value = names.slice(1).join(' ');
+            if (currentUser.email) document.getElementById('checkoutEmail').value = currentUser.email;
+            if (currentProfile?.phone || currentUser.user_metadata?.phone) {
+              document.getElementById('checkoutPhone').value = currentProfile?.phone || currentUser.user_metadata?.phone;
+            }
+          }
+        }
+      } catch (authErr) {
+        console.warn('Could not auto-fill user details:', authErr);
+      }
+
+      // 2. Read cart items from CartStore or localStorage
+      let cartItems = [];
+      if (window.CartStore && typeof window.CartStore.getCart === 'function') {
+        cartItems = window.CartStore.getCart();
+      } else {
+        try {
+          cartItems = JSON.parse(localStorage.getItem('rc_cart') || '[]');
+        } catch (e) {
+          cartItems = [];
+        }
+      }
+
+      // If cart is empty, fallback to a sample drone component so user can test checkout
+      if (!cartItems || cartItems.length === 0) {
+        cartItems = [
+          {
+            id: 'RC-DRN-001',
+            name: 'SkyFalcon 4K Thermal Inspection Drone',
+            title: 'SkyFalcon 4K Thermal Inspection Drone',
+            price: 84999,
+            qty: 1,
+            img: 'https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto/ecommerce/products/drone_skyfalcon_thermal'
+          }
+        ];
+      }
+
+      // Render summary items
+      const totalCount = cartItems.reduce((s, i) => s + (i.qty || i.quantity || 1), 0);
+      if (itemsHeader) {
+        itemsHeader.textContent = `Order Items (${totalCount})`;
+      }
+
+      const subtotal = cartItems.reduce((s, i) => s + ((i.price || 0) * (i.qty || i.quantity || 1)), 0);
+      const isFreeShipping = subtotal >= 999;
+      const shippingFee = isFreeShipping ? 0 : 99;
+      const gstAmount = Math.round((subtotal * 18) / 118);
+      const grandTotal = subtotal + shippingFee;
+
+      if (itemsContainer) {
+        itemsContainer.innerHTML = cartItems.map(item => {
+          const qty = item.qty || item.quantity || 1;
+          const itemImg = item.img || item.image || 'https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto/ecommerce/products/drone_skyfalcon_thermal';
+          const itemName = item.name || item.title || 'Component';
+          return `
+            <div style="display: flex; gap: 10px; margin-bottom: 12px; font-size: 13px; align-items: center;">
+              <img src="${itemImg}" width="44" height="44" style="object-fit: contain; border: 1px solid var(--zb-border); border-radius: 4px; background: #fff;" alt="${itemName}">
+              <div style="flex: 1;">
+                <div style="font-weight: 600; line-height: 1.3; color: var(--zb-navy);">${itemName}</div>
+                <div style="color: var(--zb-text-muted); font-size: 11px;">Qty: ${qty} &times; ₹${(item.price || 0).toLocaleString('en-IN')}</div>
+              </div>
+              <div style="font-weight: 700; color: var(--zb-navy); font-variant-numeric: tabular-nums;">
+                ₹${((item.price || 0) * qty).toLocaleString('en-IN')}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      if (subtotalEl) subtotalEl.textContent = '₹' + subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      if (shippingEl) shippingEl.textContent = isFreeShipping ? 'FREE' : '₹' + shippingFee.toLocaleString('en-IN');
+      if (gstEl) gstEl.textContent = '₹' + gstAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      if (totalEl) totalEl.textContent = '₹' + grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      if (submitBtn) submitBtn.textContent = `Place Order (₹${grandTotal.toLocaleString('en-IN')}) →`;
+
+      // 3. Handle Order Submission
+      checkoutForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        alertBox.style.display = 'none';
+
+        const paymentRadio = document.querySelector('input[name="paymentMethod"]:checked');
+        const paymentMethod = paymentRadio ? paymentRadio.value : 'UPI';
+
+        const shippingAddress = {
+          firstName: document.getElementById('checkoutFirstName').value.trim(),
+          lastName: document.getElementById('checkoutLastName').value.trim(),
+          email: document.getElementById('checkoutEmail').value.trim(),
+          phone: document.getElementById('checkoutPhone').value.trim(),
+          address: document.getElementById('checkoutAddress').value.trim(),
+          city: document.getElementById('checkoutCity').value.trim(),
+          state: document.getElementById('checkoutState').value,
+          pincode: document.getElementById('checkoutPincode').value.trim(),
+          gstin: document.getElementById('checkoutGstin')?.value.trim() || '',
+          paymentMethod: paymentMethod
+        };
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Placing your order...';
+
+        try {
+          // If authenticated, record into Supabase orders table
+          if (currentUser && window.DroneVerseAuth) {
+            const formattedItems = cartItems.map(i => ({
+              id: i.id,
+              name: i.name || i.title,
+              price: i.price,
+              quantity: i.qty || i.quantity || 1,
+              image: i.img || i.image || ''
+            }));
+
+            const createdOrder = await window.DroneVerseAuth.createOrder({
+              items: formattedItems,
+              totalAmount: grandTotal,
+              gstAmount: gstAmount,
+              shippingFee: shippingFee,
+              shippingAddress: shippingAddress
+            });
+
+            // Clear Cart
+            if (window.CartStore) {
+              window.CartStore.saveCart([]);
+            } else {
+              localStorage.removeItem('rc_cart');
+            }
+
+            showAlert('🎉 Order placed successfully! Redirecting to your Order History...', false);
+            setTimeout(() => {
+              window.location.href = './account/orders.html';
+            }, 900);
+          } else {
+            // Guest Checkout
+            const orderNum = 'DV-' + Date.now().toString(36).toUpperCase();
+            if (window.CartStore) {
+              window.CartStore.saveCart([]);
+            } else {
+              localStorage.removeItem('rc_cart');
+            }
+
+            showAlert(`🎉 Order #${orderNum} placed successfully! Please create an account or sign in to track your delivery live.`, false);
+            setTimeout(() => {
+              window.location.href = './account/login.html';
+            }, 1200);
+          }
+        } catch (err) {
+          console.error('Order placement failed:', err);
+          showAlert(err.message || 'Failed to complete order. Please try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = `Place Order (₹${grandTotal.toLocaleString('en-IN')}) →`;
+        }
+      });
+    });
+  </script>
 </body>
 </html>

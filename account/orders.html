@@ -136,40 +136,35 @@
   </div>
 
   <div class="container" style="padding: 30px 0 60px;">
-    <h1 style="font-size: 24px; font-weight: 800; color: var(--zb-navy); text-transform: uppercase; margin-bottom: 20px;">My Order History</h1>
-
-    <div style="background: #ffffff; border: 1px solid var(--zb-border); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 30px;">
-      <div style="background: var(--zb-bg-light); padding: 16px 20px; border-bottom: 1px solid var(--zb-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-        <div>
-          <span style="font-weight: 700; color: var(--zb-navy);">Order #RC-98421</span>
-          <span style="font-size: 12px; color: var(--zb-text-muted); margin-left: 10px;">Placed on 04 September 2026</span>
+    <!-- Customer Profile Header Card -->
+    <div id="customerProfileCard" style="background: #ffffff; border: 1px solid var(--zb-border); border-radius: var(--radius-md); padding: 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--zb-navy); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800;" id="userAvatar">
+          U
         </div>
         <div>
-          <span style="background: #dcfce7; color: #166534; font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-full);">Dispatched via Bluedart (AWB: 89317264)</span>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h1 style="font-size: 20px; font-weight: 800; color: var(--zb-navy); margin: 0;" id="userName">Loading Customer...</h1>
+            <span id="userRoleBadge" style="background: #eff6ff; color: #1d4ed8; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 9999px; text-transform: uppercase;">Customer</span>
+          </div>
+          <div style="font-size: 13px; color: var(--zb-text-muted); margin-top: 4px;" id="userEmail">...</div>
         </div>
       </div>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <a href="../admin/index.html" id="adminDashboardBtn" style="display: none; background: #0F172A; color: #ffffff; padding: 8px 16px; border-radius: 6px; font-size: 12.5px; font-weight: 700; text-decoration: none;">Admin Panel &rarr;</a>
+        <button type="button" id="signOutBtn" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 8px 16px; border-radius: 6px; font-size: 12.5px; font-weight: 700; cursor: pointer;">Sign Out</button>
+      </div>
+    </div>
 
-      <div style="padding: 20px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--zb-border-light); padding-bottom: 14px; margin-bottom: 14px;">
-          <div style="display: flex; gap: 14px; align-items: center;">
-            <img src="https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto/ecommerce/products/hc_sr04" width="50" height="50" style="object-fit: contain;" srcset="https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto,w_400/ecommerce/products/hc_sr04 400w, https://res.cloudinary.com/yoe6tiub/image/upload/f_auto,q_auto,w_800/ecommerce/products/hc_sr04 800w" sizes="(max-width: 600px) 400px, 800px">
-            <div>
-              <div style="font-weight: 600; color: var(--zb-navy);">Official Raspberry Pi 5 (8GB RAM)</div>
-              <div style="font-size: 12px; color: var(--zb-text-muted);">Qty: 1 &bull; Warranty: 1-Year Official</div>
-            </div>
-          </div>
-          <div style="font-weight: 700; color: var(--zb-navy);">₹7,499.00</div>
-        </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 style="font-size: 20px; font-weight: 800; color: var(--zb-navy); text-transform: uppercase; margin: 0;">My Orders</h2>
+      <a href="../collections/drones-and-accessories.html" class="section-link" style="font-size: 13px;">Browse Products &rarr;</a>
+    </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-          <div style="font-size: 13px; color: var(--zb-text-body);">
-            Shipping to: <strong>Sector 18, Gurugram 122015</strong>
-          </div>
-          <div style="display: flex; gap: 10px;">
-            <a href="../pages/track-order.html" class="price-slider-btn" style="text-decoration: none; padding: 8px 14px;">Track Live Status</a>
-            <button type="button" class="view-btn" onclick="alert('Downloading Tax Invoice PDF...');" style="border: 1px solid var(--zb-border); padding: 8px 14px;">Download GST Invoice</button>
-          </div>
-        </div>
+    <!-- Orders Live Dynamic Container -->
+    <div id="ordersContainer">
+      <div style="text-align: center; padding: 40px; background: #ffffff; border: 1px solid var(--zb-border); border-radius: var(--radius-md);">
+        <p style="font-size: 14px; color: var(--zb-text-muted); margin: 0;">Loading your order history from Supabase...</p>
       </div>
     </div>
   </div>
@@ -329,5 +324,174 @@
   </button>
 
   <script src="../js/main.js"></script>
+
+  <!-- Supabase CDN & Auth Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/auth.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      if (!window.DroneVerseAuth) {
+        console.error('DroneVerseAuth module not available.');
+        return;
+      }
+
+      // Check auth guard
+      const user = await window.DroneVerseAuth.requireAuth('./login.html');
+      if (!user) return;
+
+      const profile = await window.DroneVerseAuth.getProfile();
+      const displayName = profile?.full_name?.trim() || user.user_metadata?.full_name || user.email.split('@')[0];
+      const role = profile?.role || user.user_metadata?.role || 'customer';
+
+      // Update Profile UI
+      const userNameEl = document.getElementById('userName');
+      const userEmailEl = document.getElementById('userEmail');
+      const userAvatarEl = document.getElementById('userAvatar');
+      const roleBadgeEl = document.getElementById('userRoleBadge');
+      const adminBtnEl = document.getElementById('adminDashboardBtn');
+      const signOutBtn = document.getElementById('signOutBtn');
+
+      if (userNameEl) userNameEl.textContent = displayName;
+      if (userEmailEl) userEmailEl.textContent = user.email;
+      if (userAvatarEl) {
+        userAvatarEl.textContent = displayName.charAt(0).toUpperCase();
+      }
+      if (roleBadgeEl) {
+        roleBadgeEl.textContent = role.toUpperCase();
+        if (role === 'admin') {
+          roleBadgeEl.style.background = '#fef3c7';
+          roleBadgeEl.style.color = '#92400e';
+          if (adminBtnEl) adminBtnEl.style.display = 'inline-flex';
+        }
+      }
+
+      // Sign out handler
+      if (signOutBtn) {
+        signOutBtn.addEventListener('click', async () => {
+          await window.DroneVerseAuth.signOut();
+        });
+      }
+
+      // Fetch & Render Orders
+      const ordersContainer = document.getElementById('ordersContainer');
+      try {
+        const orders = await window.DroneVerseAuth.getUserOrders();
+
+        if (!orders || orders.length === 0) {
+          ordersContainer.innerHTML = `
+            <div style="text-align: center; padding: 60px 20px; background: #ffffff; border: 1px solid var(--zb-border); border-radius: var(--radius-md);">
+              <div style="width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: var(--zb-text-muted);">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2z"/></svg>
+              </div>
+              <h3 style="font-size: 18px; font-weight: 800; color: var(--zb-navy); margin-bottom: 8px;">No Orders Yet</h3>
+              <p style="font-size: 14px; color: var(--zb-text-muted); max-width: 440px; margin: 0 auto 20px;">
+                You haven't placed any orders yet. Discover our latest FPV racing drones, developer boards, and flight controllers!
+              </p>
+              <a href="../collections/drones-and-accessories.html" style="display: inline-block; background: var(--zb-coral); color: #ffffff; padding: 10px 24px; border-radius: var(--radius-pill); font-size: 13.5px; font-weight: 700; text-decoration: none;">
+                Explore Drones &amp; Parts &rarr;
+              </a>
+            </div>
+          `;
+          return;
+        }
+
+        // Render Order List
+        ordersContainer.innerHTML = orders.map(order => {
+          const dateStr = new Date(order.created_at).toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+
+          const statusColors = {
+            'confirmed': { bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' },
+            'processing': { bg: '#fef3c7', text: '#b45309', border: '#fde68a' },
+            'shipped': { bg: '#f0fdf4', text: '#15803d', border: '#bbf7d0' },
+            'delivered': { bg: '#ecfdf5', text: '#047857', border: '#a7f3d0' },
+            'cancelled': { bg: '#fef2f2', text: '#b91c1c', border: '#fecaca' }
+          };
+
+          const sStyle = statusColors[order.status] || statusColors['confirmed'];
+          const items = Array.isArray(order.items) ? order.items : [];
+
+          const itemsHtml = items.map(item => `
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; gap: 16px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 44px; height: 44px; border-radius: 6px; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+                  ${item.image ? `<img src="${item.image}" alt="${item.title || item.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">` : `<svg viewBox="0 0 24 24" width="20" height="20" fill="#94a3b8"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9z"/></svg>`}
+                </div>
+                <div>
+                  <div style="font-size: 13.5px; font-weight: 700; color: var(--zb-navy); line-height: 1.3;">
+                    ${item.title || item.name || 'Component'}
+                  </div>
+                  <div style="font-size: 12px; color: var(--zb-text-muted); margin-top: 2px;">
+                    Qty: ${item.quantity || 1} &times; ₹${(item.price || 0).toLocaleString('en-IN')}
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 13.5px; font-weight: 800; color: var(--zb-navy); font-variant-numeric: tabular-nums;">
+                ₹${((item.price || 0) * (item.quantity || 1)).toLocaleString('en-IN')}
+              </div>
+            </div>
+          `).join('');
+
+          return `
+            <div style="background: #ffffff; border: 1px solid var(--zb-border); border-radius: var(--radius-md); padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-sm);">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--zb-border);">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 15px; font-weight: 800; color: var(--zb-navy); letter-spacing: 0.5px;">#${order.order_number || order.id}</span>
+                    <span style="background: ${sStyle.bg}; color: ${sStyle.text}; border: 1px solid ${sStyle.border}; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 9999px; text-transform: uppercase;">
+                      ${order.status || 'Confirmed'}
+                    </span>
+                  </div>
+                  <div style="font-size: 12px; color: var(--zb-text-muted); margin-top: 4px;">
+                    Placed on ${dateStr}
+                  </div>
+                </div>
+
+                <div style="text-align: right;">
+                  <div style="font-size: 16px; font-weight: 800; color: var(--zb-navy); font-variant-numeric: tabular-nums;">
+                    ₹${(order.total_amount || 0).toLocaleString('en-IN')}
+                  </div>
+                  <div style="font-size: 11.5px; color: var(--zb-text-muted);">
+                    Incl. ₹${(order.gst_amount || 0).toLocaleString('en-IN')} GST (18%)
+                  </div>
+                </div>
+              </div>
+
+              <!-- Item breakdown -->
+              <div style="padding: 10px 0;">
+                ${itemsHtml}
+              </div>
+
+              <!-- Footer action & Tracking -->
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 14px; padding-top: 12px; border-top: 1px dashed #e2e8f0; font-size: 12.5px;">
+                <div style="color: var(--zb-text-muted);">
+                  ${order.shipping_address ? `Delivery to: <strong>${order.shipping_address.city || ''}, ${order.shipping_address.state || ''} - ${order.shipping_address.pincode || ''}</strong>` : 'Standard Express Delivery'}
+                </div>
+                <div>
+                  <a href="../pages/track-order.html?order=${order.order_number || order.id}" style="color: var(--zb-coral); font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                    Track Shipment &rarr;
+                  </a>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.error('Error rendering orders:', err);
+        ordersContainer.innerHTML = `
+          <div style="text-align: center; padding: 30px; background: #fee2e2; border: 1px solid #fca5a5; border-radius: 8px; color: #991b1b;">
+            Failed to load orders: ${err.message}. Please refresh or try again later.
+          </div>
+        `;
+      }
+    });
+  </script>
 </body>
 </html>

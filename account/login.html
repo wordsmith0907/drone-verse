@@ -128,19 +128,21 @@
       <h1 class="auth-title">Welcome Back</h1>
       <p class="auth-subtitle">Sign in with your email and password</p>
 
-      <form onsubmit="alert('Login simulated! In a full backend implementation, this logs the user into their customer dashboard.'); return false;">
+      <div id="loginAlert" style="display: none; padding: 12px 14px; margin-bottom: 16px; border-radius: 6px; font-size: 13px; line-height: 1.4;"></div>
+
+      <form id="loginForm">
         <div class="auth-form-group">
           <label class="auth-label">Email Address *</label>
-          <input type="email" class="auth-input" placeholder="name@domain.com" required>
+          <input type="email" id="loginEmail" class="auth-input" placeholder="name@domain.com" required autocomplete="email">
         </div>
         <div class="auth-form-group">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <label class="auth-label" style="margin-bottom: 0;">Password *</label>
-            <a href="#" style="font-size: 12px; color: var(--zb-blue);">Forgot password?</a>
+            <a href="javascript:void(0)" onclick="alert('Please contact care@droneverse.in for password recovery assistance.');" style="font-size: 12px; color: var(--zb-blue);">Forgot password?</a>
           </div>
-          <input type="password" class="auth-input" placeholder="••••••••" required>
+          <input type="password" id="loginPassword" class="auth-input" placeholder="••••••••" required autocomplete="current-password">
         </div>
-        <button type="submit" class="auth-btn">Sign In</button>
+        <button type="submit" id="loginSubmitBtn" class="auth-btn">Sign In</button>
       </form>
 
       <div class="auth-switch">
@@ -304,5 +306,78 @@
   </button>
 
   <script src="../js/main.js"></script>
+
+  <!-- Supabase CDN & Auth Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/auth.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      const loginForm = document.getElementById('loginForm');
+      const emailInput = document.getElementById('loginEmail');
+      const passInput = document.getElementById('loginPassword');
+      const submitBtn = document.getElementById('loginSubmitBtn');
+      const alertBox = document.getElementById('loginAlert');
+
+      // Check if already logged in -> redirect
+      setTimeout(async () => {
+        if (window.DroneVerseAuth) {
+          const session = await window.DroneVerseAuth.getSession();
+          if (session) {
+            const profile = await window.DroneVerseAuth.getProfile();
+            if (profile && profile.role === 'admin') {
+              window.location.href = '../admin/index.html';
+            } else {
+              window.location.href = './orders.html';
+            }
+          }
+        }
+      }, 200);
+
+      function showAlert(msg, isError = true) {
+        alertBox.style.display = 'block';
+        alertBox.style.background = isError ? '#fee2e2' : '#dcfce7';
+        alertBox.style.color = isError ? '#991b1b' : '#166534';
+        alertBox.style.border = isError ? '1px solid #f87171' : '1px solid #86efac';
+        alertBox.textContent = msg;
+      }
+
+      loginForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        alertBox.style.display = 'none';
+
+        const email = emailInput.value.trim();
+        const password = passInput.value;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Signing in...';
+
+        try {
+          if (!window.DroneVerseAuth) {
+            throw new Error('Auth module is loading. Please try again in a second.');
+          }
+
+          const res = await window.DroneVerseAuth.signIn(email, password);
+          showAlert('Login successful! Redirecting...', false);
+
+          const profile = await window.DroneVerseAuth.getProfile();
+          setTimeout(() => {
+            if (profile && profile.role === 'admin') {
+              window.location.href = '../admin/index.html';
+            } else {
+              window.location.href = './orders.html';
+            }
+          }, 600);
+        } catch (err) {
+          console.error('Sign in error:', err);
+          showAlert(err.message || 'Invalid email or password. Please try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign In';
+        }
+      });
+    });
+  </script>
 </body>
 </html>

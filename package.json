@@ -1,0 +1,10 @@
+{
+  "name": "droneverse",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "pg": "^8.13.3"
+  }
+}
