@@ -38,7 +38,7 @@
   --zb-border-dark: rgba(15, 23, 42, 0.16);
   
   /* Layout Dimensions */
-  --container-max-width: 1360px;
+  --container-max-width: 1440px;
   --header-height: 78px;
   --radius-xs: 3px;
   --radius-sm: 6px;
@@ -120,25 +120,25 @@ input, select, textarea {
 .container {
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 30px;
   width: 100%;
 }
 
 @media (max-width: 1200px) {
   .container {
-    padding: 0 32px;
+    padding: 0 24px;
   }
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 0 20px;
+    padding: 0 15px;
   }
 }
 
 @media (max-width: 480px) {
   .container {
-    padding: 0 16px;
+    padding: 0 12px;
   }
 }
 
