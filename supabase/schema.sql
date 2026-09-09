@@ -68,51 +68,33 @@ $$ language plpgsql security definer;
 
 -- --- Profiles Policies ---
 drop policy if exists "Users can view own profile" on public.profiles;
-create policy "Users can view own profile"
-  on public.profiles for select
-  using (auth.uid() = id or public.is_admin());
+create policy "Users can view own profile" on public.profiles for select using (auth.uid() = id or public.is_admin());
 
 drop policy if exists "Users can update own profile" on public.profiles;
-create policy "Users can update own profile"
-  on public.profiles for update
-  using (auth.uid() = id or public.is_admin());
+create policy "Users can update own profile" on public.profiles for update using (auth.uid() = id or public.is_admin());
 
 drop policy if exists "Admins can insert profiles" on public.profiles;
-create policy "Admins can insert profiles"
-  on public.profiles for insert
-  with check (auth.uid() = id or public.is_admin());
+create policy "Admins can insert profiles" on public.profiles for insert with check (auth.uid() = id or public.is_admin());
 
 -- --- Orders Policies ---
 drop policy if exists "Users can view own orders" on public.orders;
-create policy "Users can view own orders"
-  on public.orders for select
-  using (auth.uid() = user_id or public.is_admin());
+create policy "Users can view own orders" on public.orders for select using (auth.uid() = user_id or public.is_admin());
 
 drop policy if exists "Users can create own orders" on public.orders;
-create policy "Users can create own orders"
-  on public.orders for insert
-  with check (auth.uid() = user_id or public.is_admin());
+create policy "Users can create own orders" on public.orders for insert with check (auth.uid() = user_id or public.is_admin());
 
 drop policy if exists "Admins can update orders" on public.orders;
-create policy "Admins can update orders"
-  on public.orders for update
-  using (public.is_admin());
+create policy "Admins can update orders" on public.orders for update using (public.is_admin());
 
 -- --- Wishlist Policies ---
 drop policy if exists "Users can view own wishlist" on public.wishlist;
-create policy "Users can view own wishlist"
-  on public.wishlist for select
-  using (auth.uid() = user_id or public.is_admin());
+create policy "Users can view own wishlist" on public.wishlist for select using (auth.uid() = user_id or public.is_admin());
 
 drop policy if exists "Users can add to own wishlist" on public.wishlist;
-create policy "Users can add to own wishlist"
-  on public.wishlist for insert
-  with check (auth.uid() = user_id);
+create policy "Users can add to own wishlist" on public.wishlist for insert with check (auth.uid() = user_id);
 
 drop policy if exists "Users can remove from own wishlist" on public.wishlist;
-create policy "Users can remove from own wishlist"
-  on public.wishlist for delete
-  using (auth.uid() = user_id or public.is_admin());
+create policy "Users can remove from own wishlist" on public.wishlist for delete using (auth.uid() = user_id or public.is_admin());
 
 -- 7. Trigger: Auto-create Profile row when a new user signs up in auth.users
 create or replace function public.handle_new_user()
