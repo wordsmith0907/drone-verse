@@ -5,3 +5,6 @@ __pycache__/
 *.pyc
 .env
 scratch/
+node_modules/
+.sanity/
+dist/
