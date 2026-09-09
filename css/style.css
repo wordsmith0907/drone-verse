@@ -69,6 +69,9 @@ html {
   font-size: 14px;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
 }
 
 body {
@@ -79,6 +82,9 @@ body {
   background-color: var(--zb-bg-white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
 }
 
 ::selection {
@@ -641,11 +647,13 @@ input, select, textarea {
 .main-nav-links {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: nowrap;
-  gap: 0;
+  gap: 2px;
   flex: 1;
-  padding-left: 20px;
+  padding-left: 16px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .main-nav-links__item {
@@ -657,13 +665,13 @@ input, select, textarea {
 .main-nav-links__link {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 15px 10px;
-  font-size: 14px;
+  gap: 4px;
+  padding: 15px 7px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--zb-navy);
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   white-space: nowrap;
   transition: color var(--transition-fast);
 }
@@ -673,9 +681,9 @@ input, select, textarea {
 }
 
 .main-nav-links__badge {
-  font-size: 9px;
+  font-size: 8.5px;
   font-weight: 700;
-  padding: 1.5px 6px;
+  padding: 1px 5px;
   border-radius: var(--radius-sm);
   text-transform: uppercase;
   line-height: 1.2;
@@ -707,23 +715,44 @@ input, select, textarea {
 }
 
 @media (max-width: 1360px) {
-  .main-nav-links__link {
-    font-size: 13px;
-    padding: 15px 8px;
-  }
-}
-
-@media (max-width: 1180px) {
   .departments-menu {
-    width: 210px;
+    width: 220px;
   }
   .main-nav-links {
-    padding-left: 10px;
+    padding-left: 8px;
+    gap: 0;
   }
   .main-nav-links__link {
     font-size: 12px;
-    padding: 15px 5px;
-    gap: 3px;
+    padding: 14px 6px;
+    letter-spacing: 0;
+  }
+}
+
+@media (max-width: 1200px) {
+  .departments-menu {
+    width: 200px;
+  }
+  .main-nav-links {
+    padding-left: 6px;
+  }
+  .main-nav-links__link {
+    font-size: 11px;
+    padding: 12px 4px;
+    gap: 2px;
+  }
+  /* Hide tertiary links from desktop bar on smaller laptops (they are in footer & departments menu) */
+  .main-nav-links__item:nth-last-child(-n+2) {
+    display: none;
+  }
+}
+
+@media (max-width: 1050px) {
+  .departments-menu {
+    width: 190px;
+  }
+  .main-nav-links__item:nth-last-child(-n+3) {
+    display: none;
   }
 }
 
@@ -1233,7 +1262,7 @@ input, select, textarea {
 
 .product-grid-5 {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 20px;
 }
 
@@ -2095,15 +2124,35 @@ input, select, textarea {
 /* ==========================================================================
    RESPONSIVE BREAKPOINTS
    ========================================================================== */
+@media (max-width: 1280px) {
+  .product-grid-5 {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+}
+
 @media (max-width: 1200px) {
   .product-grid-5 {
     grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
   }
   .category-slider-grid {
     grid-template-columns: repeat(4, 1fr);
   }
   .departments-submenu {
     width: 460px;
+  }
+  .site-header__inner {
+    gap: 16px;
+  }
+  .site-header__search {
+    max-width: 520px;
+  }
+  .header-action-btn__text {
+    display: none;
+  }
+  .site-header__actions {
+    gap: 10px;
   }
 }
 
@@ -2114,6 +2163,9 @@ input, select, textarea {
   .site-header__tagline {
     display: none;
   }
+  .site-nav-bar {
+    display: none;
+  }
   .departments-menu {
     width: 220px;
   }
@@ -2122,6 +2174,7 @@ input, select, textarea {
   }
   .product-grid-5 {
     grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
   }
   .footer-top-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -2153,6 +2206,32 @@ input, select, textarea {
   }
   .site-nav-bar {
     display: none; /* Handled by mobile drawer */
+  }
+  .tabs-header-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    border-bottom: none;
+    margin-bottom: 20px;
+  }
+  .zb-tabs-nav {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap !important;
+    border-bottom: 2px solid var(--zb-border);
+    padding-bottom: 0;
+    scrollbar-width: none;
+  }
+  .zb-tabs-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .zb-tab-btn {
+    padding: 10px 14px;
+    font-size: 12px;
+    flex-shrink: 0;
   }
   .trust-bar__grid {
     grid-template-columns: 1fr 1fr;
